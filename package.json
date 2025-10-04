@@ -1,6 +1,6 @@
 {
   "name": "velvet-scalpel",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A mystical AI chat application using OpenAI's GPT-4o with enhanced v2.0 format and beautiful typography.",
   "main": "server.js",
   "scripts": {
