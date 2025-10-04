@@ -6,13 +6,110 @@
     const introSection = document.getElementById('intro-section');
     const chatContainer = document.getElementById('chat-container');
 
+    // Mystical Effects Functions
+    function createMagicalParticle(x, y) {
+        const particle = document.createElement('div');
+        particle.className = 'magical-burst';
+        particle.style.cssText = `
+            position: fixed;
+            left: ${x}px;
+            top: ${y}px;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, #8a2be2, #ff69b4);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+            animation: burstFloat 2s ease-out forwards;
+        `;
+        
+        document.body.appendChild(particle);
+        setTimeout(() => particle.remove(), 2000);
+    }
+
+    function addMagicalClickEffect(element) {
+        element.addEventListener('click', function(e) {
+            createMagicalParticle(e.clientX, e.clientY);
+            
+            // Create multiple particles for extra magic
+            for(let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    createMagicalParticle(
+                        e.clientX + (Math.random() - 0.5) * 50,
+                        e.clientY + (Math.random() - 0.5) * 50
+                    );
+                }, i * 100);
+            }
+        });
+    }
+
+    // Add CSS for burst animation if not already added
+    if (!document.querySelector('#magical-styles')) {
+        const magicalStyles = document.createElement('style');
+        magicalStyles.id = 'magical-styles';
+        magicalStyles.textContent = `
+            @keyframes burstFloat {
+                0% { 
+                    opacity: 1; 
+                    transform: scale(0) translateY(0px);
+                }
+                50% { 
+                    opacity: 0.8; 
+                    transform: scale(1.2) translateY(-30px);
+                }
+                100% { 
+                    opacity: 0; 
+                    transform: scale(0.3) translateY(-60px);
+                }
+            }
+            
+            .typing-indicator {
+                opacity: 0.6;
+                font-style: italic;
+                animation: pulse 1.5s ease-in-out infinite;
+            }
+        `;
+        document.head.appendChild(magicalStyles);
+    }
+
+    // Add magical effects to buttons
+    addMagicalClickEffect(beginButton);
+    addMagicalClickEffect(sendButton);
+
     // Handle begin session button
     beginButton.addEventListener('click', function() {
-        introSection.style.display = 'none';
-        chatContainer.classList.remove('chat-hidden');
-        chatContainer.classList.add('chat-visible');
-        userInput.focus();
+        // Add fade transition effect
+        introSection.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
+        introSection.style.opacity = '0';
+        introSection.style.transform = 'translateY(-20px)';
+        
+        setTimeout(() => {
+            introSection.style.display = 'none';
+            chatContainer.classList.remove('chat-hidden');
+            chatContainer.classList.add('chat-visible');
+            chatContainer.style.opacity = '0';
+            chatContainer.style.transform = 'translateY(20px)';
+            
+            // Fade in chat container
+            setTimeout(() => {
+                chatContainer.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
+                chatContainer.style.opacity = '1';
+                chatContainer.style.transform = 'translateY(0)';
+            }, 50);
+            
+            userInput.focus();
+        }, 800);
     });
+
+    // Add typing indicator for mystical feel
+    function showTypingIndicator() {
+        const typingLi = document.createElement('li');
+        typingLi.className = 'ai-message typing-indicator';
+        typingLi.innerHTML = '<div class="mystical-typing">⟁ The Scalpel is analyzing patterns... ✨</div>';
+        chatList.appendChild(typingLi);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+        return typingLi;
+    }
 
     // Color classes for highlighting
     const highlightColors = [
@@ -183,14 +280,8 @@
         chatList.appendChild(userLi);
         userInput.value = '';
 
-        // Add loading indicator
-        const loadingLi = document.createElement('li');
-        loadingLi.className = 'ai-message';
-        loadingLi.innerHTML = `
-            <div class="section-title">Velvet Scalpel v2.0 Processing</div>
-            <div class="section-content">Detecting distortions...</div>
-        `;
-        chatList.appendChild(loadingLi);
+        // Add magical typing indicator
+        const loadingLi = showTypingIndicator();
         chatList.scrollTop = chatList.scrollHeight;
 
         try {
