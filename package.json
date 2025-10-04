@@ -1,0 +1,40 @@
+{
+  "name": "velvet-scalpel",
+  "version": "2.0.0",
+  "description": "A mystical AI chat application using OpenAI's GPT-4o with enhanced v2.0 format and beautiful typography.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "deploy": "git add . && git commit -m 'Deploy update' && git push origin main",
+    "install-prod": "npm install --production"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
+  "keywords": [
+    "ai", 
+    "chat", 
+    "mystical", 
+    "openai", 
+    "gpt-4o", 
+    "velvet-scalpel"
+  ],
+  "author": "Velvet Scalpel Team",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "dotenv": "^17.2.3",
+    "express": "^4.17.1",
+    "node-fetch": "^2.6.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/velvet-scalpel.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/velvet-scalpel/issues"
+  },
+  "homepage": "https://github.com/yourusername/velvet-scalpel#readme"
+}
