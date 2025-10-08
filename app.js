@@ -311,8 +311,8 @@
 
     sendButton.addEventListener('click', async function() {
         const message = userInput.value.trim();
-        if (message.length < 1 || message.length > 140) {
-            alert('Message must be 1-140 characters');
+        if (message.length < 1) {
+            alert('Message must not be empty');
             return;
         }
 

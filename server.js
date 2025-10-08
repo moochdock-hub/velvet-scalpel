@@ -38,7 +38,7 @@ app.post('/api/chat', async (req, res) => {
     const userMessage = req.body.message;
 
     if (!userMessage || userMessage.length < 1) {
-        return res.status(400).json({ error: 'EDGE INVALID' });
+        return res.status(400).json({ error: 'EDGE INVALID: message must not be empty' });
     }
 
     try {

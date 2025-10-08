@@ -121,10 +121,11 @@ body {
 }
 
 header {
-    background: linear-gradient(90deg, #2d1b69 0%, #8a2be2 50%, #2d1b69 100%);
-    padding: 20px;
+    background: linear-gradient(90deg, rgba(45,27,105,0.95) 0%, rgba(138,43,226,0.95) 50%, rgba(45,27,105,0.95) 100%);
+    padding: 26px 20px;
     text-align: center;
-    border-bottom: 2px solid #4a4a6a;
+    border-bottom: 2px solid rgba(74,74,106,0.6);
+    backdrop-filter: blur(6px);
 }
 
 header h1 {
@@ -164,18 +165,18 @@ main {
 
 /* Intro Section Styling */
 .intro-panel {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%);
-    border: 2px solid #4a4a6a;
-    border-radius: 12px;
-    padding: 30px;
-    margin-bottom: 20px;
-    box-shadow: 0 0 25px rgba(138, 43, 226, 0.2);
+    background: linear-gradient(180deg, rgba(25,18,40,0.9), rgba(20,14,30,0.9));
+    border: 1px solid rgba(74,74,106,0.4);
+    border-radius: 14px;
+    padding: 36px;
+    margin-bottom: 26px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.6), 0 0 30px rgba(138, 43, 226, 0.08) inset;
 }
 
 .intro-content h2 {
     font-family: 'Cinzel', serif;
     color: #e6e6fa;
-    font-size: 1.5em;
+    font-size: 1.6em;
     margin-bottom: 15px;
     text-align: center;
     text-shadow: 0 0 15px rgba(138, 43, 226, 0.6);
@@ -199,21 +200,21 @@ main {
 }
 
 .usage-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin: 20px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+    margin: 22px 0;
 }
 
 .usage-item {
     display: flex;
     align-items: flex-start;
-    gap: 15px;
-    padding: 15px;
-    background: linear-gradient(135deg, #2d1b69 0%, #1a0d26 100%);
-    border-left: 3px solid #8a2be2;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(138, 43, 226, 0.2);
+    gap: 16px;
+    padding: 18px;
+    background: linear-gradient(180deg, rgba(45,27,105,0.12), rgba(20,14,30,0.06));
+    border-left: 4px solid rgba(138,43,226,0.85);
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6), 0 4px 12px rgba(138, 43, 226, 0.04) inset;
 }
 
 .usage-item > div {
@@ -233,42 +234,39 @@ main {
 }
 
 .warning-notice {
-    background: linear-gradient(135deg, #4a0000 0%, #2d0000 100%);
-    border: 1px solid #ff6b6b;
-    border-radius: 8px;
-    padding: 15px;
+    background: linear-gradient(90deg, rgba(80,15,15,0.6), rgba(45,0,0,0.5));
+    border: 1px solid rgba(255,107,107,0.12);
+    border-radius: 10px;
+    padding: 16px;
     margin: 20px 0;
-    color: #ffcccb;
+    color: #ffd6d6;
     font-family: 'Source Code Pro', 'Courier New', monospace;
-    font-size: 1.0em;
+    font-size: 0.98em;
     font-weight: 500;
     text-align: center;
-    letter-spacing: 1px;
+    letter-spacing: 0.8px;
 }
 
 .begin-button {
-    display: block;
-    margin: 25px auto 0;
-    padding: 12px 30px;
-    background: linear-gradient(90deg, #2d1b69 0%, #8a2be2 50%, #2d1b69 100%);
-    color: #e6e6fa;
-    border: 2px solid #4a4a6a;
-    border-radius: 8px;
+    display: inline-block;
+    margin: 26px auto 0;
+    padding: 14px 36px;
+    background: linear-gradient(90deg, rgba(138,43,226,0.95) 0%, rgba(77,40,150,0.95) 100%);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
     font-family: 'Cinzel', serif;
-    font-size: 1.1em;
+    font-size: 1.12em;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
-    text-shadow: 0 0 10px rgba(138, 43, 226, 0.6);
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+    text-shadow: 0 2px 14px rgba(0,0,0,0.6);
+    box-shadow: 0 10px 30px rgba(138,43,226,0.18), 0 2px 8px rgba(0,0,0,0.6) inset;
 }
 
 .begin-button:hover {
-    background: linear-gradient(90deg, #8a2be2 0%, #2d1b69 50%, #8a2be2 100%);
-    box-shadow: 
-        0 0 20px rgba(138, 43, 226, 0.6),
-        0 0 40px rgba(138, 43, 226, 0.3),
-        0 5px 15px rgba(0, 0, 0, 0.3);
-    transform: translateY(-3px) scale(1.02);
-    animation: pulse 1s ease-in-out infinite;
+    transform: translateY(-4px) scale(1.025);
+    box-shadow: 0 18px 40px rgba(138,43,226,0.26), 0 6px 18px rgba(0,0,0,0.6);
 }
 
 .begin-button:active {
@@ -497,13 +495,13 @@ main {
 #user-input {
     width: 100%;
     min-height: 80px;
-    padding: 15px;
-    border: 2px solid #4a4a6a;
-    border-radius: 10px;
-    background: linear-gradient(145deg, #0f0f23 0%, #1a1a2e 100%);
-    color: #e6e6fa;
+    padding: 14px;
+    border: 2px solid rgba(68,68,68,0.6);
+    border-radius: 12px;
+    background: linear-gradient(145deg, #0b0b14 0%, #151225 100%);
+    color: #f2eefe;
     font-family: 'Crimson Text', serif;
-    font-size: 1.1em;
+    font-size: 1.08em;
     resize: vertical;
     box-sizing: border-box;
 }
