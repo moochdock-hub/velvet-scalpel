@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Source+Code+Pro:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Source+Code+Pro:wght@400;500;600&family=Sora:wght@400;500;600&display=swap');
 
 /* Mystical Animations */
 @keyframes float {
@@ -85,6 +85,32 @@ body {
     background-attachment: fixed;
     overflow-x: hidden;
     position: relative;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Subtle tech grid overlay */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+        repeating-linear-gradient(
+            to right,
+            rgba(255,255,255,0.02) 0px,
+            rgba(255,255,255,0.02) 1px,
+            transparent 1px,
+            transparent 24px
+        ),
+        repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,0.02) 0px,
+            rgba(255,255,255,0.02) 1px,
+            transparent 1px,
+            transparent 24px
+        );
+    z-index: 1;
 }
 
 #app {
@@ -137,6 +163,10 @@ header h1 {
     letter-spacing: 3px;
     animation: pulse 3s ease-in-out infinite;
     position: relative;
+    background: linear-gradient(180deg, #ffffff 0%, #d9c8ff 50%, #b896ff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
 }
 
 header h1::after {
@@ -149,14 +179,15 @@ header h1::after {
     animation-delay: 1s;
 }
 
+/* Subtitle: smaller font polish */
 .subtitle {
-    font-family: 'Source Code Pro', 'Courier New', monospace;
-    font-size: 1.18em;
-    color: #dda0dd;
-    margin-top: 8px;
-    font-weight: 600; /* slightly bolder for readability */
-    letter-spacing: 1.5px;
-    text-shadow: 0 0 10px rgba(221, 160, 221, 0.45);
+    font-family: 'Sora', system-ui, -apple-system, 'Segoe UI', Roboto, 'Source Code Pro', monospace;
+    font-size: 1.05em;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #d6c7ff;
+    text-shadow: 0 0 8px rgba(214, 199, 255, 0.25);
 }
 
 main {
@@ -197,6 +228,11 @@ main {
     text-align: center;
     font-size: 1.12em; /* slightly larger for readability */
     font-weight: 500; /* a touch bolder */
+    max-width: 62ch;
+    margin-left: auto;
+    margin-right: auto;
+    letter-spacing: 0.01em;
+    hyphens: auto;
 }
 
 .usage-grid {
@@ -215,6 +251,13 @@ main {
     border-left: 4px solid rgba(138,43,226,0.85);
     border-radius: 10px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.6), 0 4px 12px rgba(138, 43, 226, 0.04) inset;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.usage-item:hover {
+    transform: translateY(-4px);
+    border-left-color: #a679ff;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.6), 0 0 0 1px rgba(166,121,255,0.12) inset;
 }
 
 .usage-item > div {
@@ -231,8 +274,11 @@ main {
 .usage-item strong {
     color: #ffd700;
     font-family: 'Cinzel', serif;
+    font-family: 'Sora', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    letter-spacing: 0.02em;
 }
 
+/* Refine warning notice typography */
 .warning-notice {
     background: linear-gradient(90deg, rgba(80,15,15,0.6), rgba(45,0,0,0.5));
     border: 1px solid rgba(255,107,107,0.12);
@@ -245,6 +291,7 @@ main {
     font-weight: 500;
     text-align: center;
     letter-spacing: 0.8px;
+    backdrop-filter: blur(3px);
 }
 
 .begin-button {
@@ -264,16 +311,22 @@ main {
     box-shadow: 0 10px 30px rgba(138,43,226,0.18), 0 2px 8px rgba(0,0,0,0.6) inset;
 }
 
+.begin-button:focus-visible {
+    outline: 2px solid rgba(166,121,255,0.6);
+    outline-offset: 3px;
+}
+
 .begin-button:hover {
     transform: translateY(-4px) scale(1.025);
     box-shadow: 0 18px 40px rgba(138,43,226,0.26), 0 6px 18px rgba(0,0,0,0.6);
 }
 
 .begin-button:active {
-    transform: translateY(-1px) scale(0.98);
+    transform: translateY(-1px) scale(0.99);
     animation: none;
 }
 
+/* Chat styles */
 .chat-hidden {
     display: none;
 }
