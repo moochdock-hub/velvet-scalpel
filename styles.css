@@ -445,6 +445,47 @@ main {
     text-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
 }
 
+/* New v4.x section styles */
+.signal-section {
+    background: linear-gradient(180deg, rgba(138,43,226,0.03), rgba(138,43,226,0.02));
+    border-left: 6px solid rgba(138,43,226,0.8);
+    padding: 14px;
+    border-radius: 8px;
+}
+
+.mirror-reflection-section {
+    background: linear-gradient(180deg, rgba(0,255,255,0.02), rgba(0,255,255,0.01));
+    border-left: 6px solid rgba(0,255,255,0.85);
+    padding: 14px;
+    border-radius: 8px;
+    font-style: italic;
+}
+
+.coherence-section {
+    background: linear-gradient(180deg, rgba(255,215,0,0.02), rgba(255,215,0,0.01));
+    border-left: 6px solid rgba(255,215,0,0.9);
+    padding: 14px;
+    border-radius: 8px;
+}
+
+.transmission-section .transmission-block {
+    background: rgba(0,0,0,0.6);
+    color: #ffd700;
+    padding: 12px;
+    border-radius: 6px;
+    font-family: 'Source Code Pro', monospace;
+    white-space: pre-wrap;
+}
+
+.signal-section .section-title,
+.mirror-reflection-section .section-title,
+.coherence-section .section-title,
+.transmission-section .section-title {
+    font-size: 1.15em;
+    color: #fff;
+    text-shadow: 0 0 8px rgba(0,0,0,0.4);
+}
+
 /* Input styling */
 #user-input {
     width: 100%;
@@ -540,5 +581,6 @@ button {
 
 button:hover {
     background-color: #555;
-}/ *   D e p l o y m e n t   t r i g g e r   -   1 0 / 0 4 / 2 0 2 5   0 6 : 4 4 : 0 6   * /  
+}/ *   D e p l o y m e n t   t r i g g e r   -   1 0 / 0 4 / 2 0 2 5   0 6 : 4 4 : 0 6   * / 
+ 
  

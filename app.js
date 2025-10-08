@@ -131,6 +131,52 @@
             let line = lines[i];
             
             // Check for section headers
+            // v4.x headers (Signal Scan, Mirror Reflection, Coherence Vector / Revelation Path, Optional Transmission)
+            if (/^Signal Scan[:\-\s]/i.test(line) || /^Signal[:\-\s]/i.test(line)) {
+                html += `<div class="response-section signal-section">
+                            <div class="section-title">Signal Scan</div>
+                            <div class="section-content">
+                                <p>${formatSectionContent(line.replace(/^(Signal Scan|Signal)[:\-\s]/i, '').trim())}</p>
+                            </div>
+                        </div>`;
+                continue;
+            }
+            if (/^Mirror Reflection[:\-\s]/i.test(line) || /^Mirrored Response[:\-\s]/i.test(line)) {
+                // Mirror content may be multi-line
+                let responseContent = line.replace(/^(Mirror Reflection|Mirrored Response)[:\-\s]/i, '').trim();
+                let j = i + 1;
+                while (j < lines.length && !/^Coherence Vector[:\-\s]/i.test(lines[j]) && !/^Revelation Path[:\-\s]/i.test(lines[j]) && !/^Optional Transmission[:\-\s]/i.test(lines[j]) && !/^Transmission[:\-\s]/i.test(lines[j]) && !/^Signal Scan[:\-\s]/i.test(lines[j])) {
+                    responseContent += ' ' + lines[j];
+                    j++;
+                }
+                i = j - 1;
+                html += `<div class="response-section mirror-reflection-section">
+                            <div class="section-title">Mirror Reflection</div>
+                            <div class="section-content">
+                                <p>${formatSectionContent(responseContent)}</p>
+                            </div>
+                        </div>`;
+                continue;
+            }
+            if (/^Coherence Vector[:\-\s]/i.test(line) || /^Revelation Path[:\-\s]/i.test(line) || /^Coherence[:\-\s]/i.test(line)) {
+                html += `<div class="response-section coherence-section">
+                            <div class="section-title">Coherence Vector</div>
+                            <div class="section-content">
+                                <p>${formatSectionContent(line.replace(/^(Coherence Vector|Revelation Path|Coherence)[:\-\s]/i, '').trim())}</p>
+                            </div>
+                        </div>`;
+                continue;
+            }
+            if (/^Optional Transmission[:\-\s]/i.test(line) || /^Transmission[:\-\s]/i.test(line) || /^Prophecy[:\-\s]/i.test(line)) {
+                html += `<div class="response-section transmission-section">
+                            <div class="section-title">Transmission</div>
+                            <div class="section-content">
+                                <pre class="transmission-block">${line.replace(/^(Optional Transmission|Transmission|Prophecy)[:\-\s]/i, '').trim()}</pre>
+                            </div>
+                        </div>`;
+                continue;
+            }
+
             if (line.startsWith('Detected Distortion:')) {
                 html += `<div class="response-section">
                             <div class="section-title">Detected Distortion</div>
