@@ -150,12 +150,12 @@ header h1::after {
 
 .subtitle {
     font-family: 'Source Code Pro', 'Courier New', monospace;
-    font-size: 1.1em;
+    font-size: 1.18em;
     color: #dda0dd;
     margin-top: 8px;
-    font-weight: 500;
-    letter-spacing: 2px;
-    text-shadow: 0 0 10px rgba(221, 160, 221, 0.4);
+    font-weight: 600; /* slightly bolder for readability */
+    letter-spacing: 1.5px;
+    text-shadow: 0 0 10px rgba(221, 160, 221, 0.45);
 }
 
 main {
@@ -190,10 +190,12 @@ main {
 }
 
 .intro-content p {
-    line-height: 1.6;
+    line-height: 1.65;
     margin-bottom: 20px;
     color: #e6e6fa;
     text-align: center;
+    font-size: 1.12em; /* slightly larger for readability */
+    font-weight: 500; /* a touch bolder */
 }
 
 .usage-grid {
@@ -212,6 +214,11 @@ main {
     border-left: 3px solid #8a2be2;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(138, 43, 226, 0.2);
+}
+
+.usage-item > div {
+    font-size: 1.04em; /* slightly larger than body for clarity */
+    font-weight: 500; /* clearer, slightly bolder text */
 }
 
 .usage-icon {
@@ -581,6 +588,5 @@ button {
 
 button:hover {
     background-color: #555;
-}/ *   D e p l o y m e n t   t r i g g e r   -   1 0 / 0 4 / 2 0 2 5   0 6 : 4 4 : 0 6   * / 
- 
- 
+}
+
