@@ -208,7 +208,7 @@ main { padding: 28px; }
     background: linear-gradient(180deg, rgba(25,18,40,0.9), rgba(20,14,30,0.9));
     border: 1px solid rgba(74,74,106,0.35);
     border-radius: 14px;
-    padding: 34px;
+    padding: 26px;
     margin-bottom: 22px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.55), 0 0 26px rgba(138, 43, 226, 0.06) inset;
 }
@@ -229,7 +229,7 @@ main { padding: 28px; }
     font-family: 'Cinzel', serif;
     color: #e6e6fa;
     font-size: 1.55em;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     text-align: center;
     text-shadow: 0 0 14px rgba(138, 43, 226, 0.5);
 }
@@ -244,20 +244,21 @@ main { padding: 28px; }
 
 .intro-content p {
     font-family: 'Sora', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    font-size: 1.08em;
-    line-height: 1.82;
+    font-size: 1.02em;
+    line-height: 1.7;
     font-weight: 500;
     text-align: center;
     max-width: 62ch;
-    margin: 0 auto 18px;
+    margin: 0 auto 12px;
     letter-spacing: 0.01em;
     hyphens: auto;
+    opacity: 0.96;
 }
 
 .neon-divider {
     height: 2px;
     width: 100%;
-    margin: 14px 0 18px 0;
+    margin: 10px 0 12px 0;
     background: linear-gradient(90deg, rgba(138,43,226,0), rgba(138,43,226,0.9), rgba(0,255,255,0.8), rgba(138,43,226,0));
     box-shadow: 0 0 16px rgba(138,43,226,0.35), 0 0 24px rgba(0,255,255,0.2);
     border-radius: 999px;
@@ -269,7 +270,7 @@ main { padding: 28px; }
     flex-wrap: wrap;
     gap: 10px;
     justify-content: center;
-    margin: 6px 0 10px 0;
+    margin: 4px 0 8px 0;
 }
 .hero-badges .badge {
     background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
