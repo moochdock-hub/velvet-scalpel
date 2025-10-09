@@ -139,14 +139,14 @@
 
             const tests = [
                 { key: 'signal', re: /^(Signal Scan|Signal)\s*[:]?/i, title: 'Signal Scan' },
-                { key: 'mirror_v4', re: /^(Mirror Reflection|Mirrored Response)\s*[:]?/i, title: 'Mirror Reflection' },
+                { key: 'mirror_v4', re: /^(Mirror Reflection|Mirrored Response)\s*[:]?/i, title: 'Reflection' },
                 { key: 'coherence', re: /^(Coherence Vector|Revelation Path|Coherence)\s*[:]?/i, title: 'Coherence Vector' },
                 { key: 'transmission', re: /^(Optional Transmission|Transmission|Prophecy)\s*[:]?/i, title: 'Transmission' },
                 { key: 'distortion', re: /^Detected Distortion\s*[:]?/i, title: 'Detected Distortion' },
                 { key: 'blueprint', re: /^Blueprint\s*[:]?/i, title: 'Blueprint' },
                 { key: 'topology', re: /^Topology Map\s*[:]?/i, title: 'Topology Map' },
                 { key: 'recursion', re: /^Recursion Tracking\s*[:]?/i, title: 'Recursion Tracking' },
-                { key: 'mirror_legacy', re: /^Mirrored Response\s*[:]?/i, title: 'Mirrored Response' },
+                { key: 'mirror_legacy', re: /^Mirrored Response\s*[:]?/i, title: 'Reflection' },
                 { key: 'vector', re: /^Vector Prompt\s*[:]?/i, title: 'Vector Prompt' },
             ];
             for (const t of tests) {
@@ -192,15 +192,16 @@
                     <div class="section-content"><pre class="transmission-block">${escapeHTML(decodeHTMLEntities(c))}</pre></div>
                 </div>`;
             }
+            // Rename mirror sections in UI to avoid the word "mirror"
             if (sec.key === 'mirror_v4') {
                 return `<div class="response-section mirror-reflection-section">
-                    <div class="section-title">${sec.title}</div>
+                    <div class="section-title">Reflection</div>
                     <div class="section-content"><p>${formatSectionContent(c)}</p></div>
                 </div>`;
             }
             if (sec.key === 'mirror_legacy') {
                 return `<div class="response-section mirror-section">
-                    <div class="section-title">${sec.title}</div>
+                    <div class="section-title">Reflection</div>
                     <div class="section-content"><p>${formatSectionContent(c)}</p></div>
                 </div>`;
             }
@@ -318,6 +319,29 @@
 
         return formatted.trim();
     }
+
+    // Stardust field
+    (function createStardustField() {
+        const count = 60; // balanced amount
+        const frag = document.createDocumentFragment();
+        for (let i = 0; i < count; i++) {
+            const s = document.createElement('div');
+            s.className = 'stardust';
+            const left = Math.random() * 100;
+            const top = Math.random() * 100;
+            const delay = (Math.random() * 4).toFixed(2) + 's';
+            const dur = (2 + Math.random() * 3).toFixed(2) + 's';
+            const size = Math.random() < 0.2 ? 3 : 2; // a few brighter points
+            s.style.left = left + 'vw';
+            s.style.top = top + 'vh';
+            s.style.setProperty('--d', delay);
+            s.style.setProperty('--t', dur);
+            s.style.width = size + 'px';
+            s.style.height = size + 'px';
+            frag.appendChild(s);
+        }
+        document.body.appendChild(frag);
+    })();
 
     sendButton.addEventListener('click', async function() {
         const message = userInput.value.trim();

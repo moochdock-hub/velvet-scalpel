@@ -89,7 +89,7 @@
 body {
     font-family: 'Crimson Text', serif;
     background: linear-gradient(135deg, #0d0d0d 0%, #1a0d26 50%, #0d0d0d 100%);
-    color: #e6e6fa;
+    color: #f0ecff;
     margin: 0;
     padding: 0;
     display: flex;
@@ -421,7 +421,7 @@ main { padding: 28px; }
 /* Hierarchical structure for AI responses */
 .response-section { margin: 14px 0; }
 .section-title { font-family: 'Cinzel', serif; font-size: 1.18em; font-weight: 600; color: #dda0dd; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.08em; border-bottom: 1px solid #3b3b58; padding-bottom: 6px; }
-.section-content { margin-left: 16px; font-size: 1.04em; line-height: 1.75; margin-bottom: 10px; }
+.section-content { margin-left: 16px; font-size: 1.04em; line-height: 1.75; margin-bottom: 10px; color: #efeaff; font-weight: 520; letter-spacing: 0.005em; text-shadow: none; }
 .section-content p { margin: 8px 0; padding: 6px 0; text-align: left; }
 
 /* Color highlighting classes */
@@ -482,7 +482,7 @@ main { padding: 28px; }
 
 /* Composer: input + send button layout */
 .composer { display: flex; gap: 12px; align-items: flex-end; position: sticky; bottom: 0; padding-top: 8px; background: linear-gradient(180deg, transparent 0%, rgba(20,14,30,0.6) 100%); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
-.composer #user-input { flex: 1; min-height: 84px; max-height: 220px; padding: 14px; border: 2px solid rgba(68,68,68,0.6); border-radius: 12px; background: linear-gradient(145deg, #0b0b14 0%, #151225 100%); color: #f2eefe; font-family: 'Crimson Text', serif; font-size: 1.06em; resize: vertical; box-sizing: border-box; }
+.composer #user-input { flex: 1; min-height: 84px; max-height: 220px; padding: 14px; border: 2px solid rgba(68,68,68,0.6); border-radius: 12px; background: linear-gradient(145deg, #0b0b14 0%, #151225 100%); color: #f6f3ff; font-family: 'Crimson Text', serif; font-size: 1.06em; resize: vertical; box-sizing: border-box; }
 .composer #user-input:focus { outline: none; border-color: #8a2be2; box-shadow: 0 0 14px rgba(138, 43, 226, 0.35); }
 .composer #send-button { flex: 0 0 auto; height: 48px; padding: 0 18px; background: linear-gradient(135deg, #8a2be2 0%, #9370db 100%); color: white; border: none; border-radius: 10px; font-family: 'Cinzel', serif; font-size: 1.02em; font-weight: 600; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease; letter-spacing: 0.06em; text-transform: uppercase; }
 .composer #send-button:hover { transform: translateY(-2px); filter: brightness(1.05); box-shadow: 0 8px 22px rgba(138, 43, 226, 0.34), 0 0 24px rgba(138, 43, 226, 0.18); }
@@ -494,6 +494,23 @@ main { padding: 28px; }
 #chat-container::-webkit-scrollbar-thumb { background: linear-gradient(145deg, #8a2be2, #9370db); border-radius: 4px; }
 #chat-container::-webkit-scrollbar-thumb:hover { background: linear-gradient(145deg, #9370db, #8a2be2); }
 
+/* Stardust particles */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.1); }
+}
+.stardust {
+  position: fixed;
+  width: 2px;
+  height: 2px;
+  background: radial-gradient(circle, rgba(255,255,255,0.9), rgba(255,255,255,0));
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0; /* behind main app */
+  animation: twinkle var(--t, 3s) ease-in-out var(--d, 0s) infinite;
+  filter: drop-shadow(0 0 4px rgba(255,255,255,0.35)) drop-shadow(0 0 8px rgba(138,43,226,0.25));
+}
+
 /* Responsive */
 @media (max-width: 640px) {
     main { padding: 18px; }
@@ -503,6 +520,15 @@ main { padding: 28px; }
     .hero-badges { gap: 8px; }
     .hero-badges .badge { padding: 7px 10px; font-size: 0.86em; }
 }
+
+/* Crisper readability adjustments */
+body { color: #f0ecff; }
+.intro-content .intro-one { font-family: 'Sora', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 1.02em; line-height: 1.7; letter-spacing: 0.01em; opacity: 0.96; }
+.section-content { color: #efeaff; font-weight: 520; letter-spacing: 0.005em; text-shadow: none; }
+#user-input { color: #f6f3ff; }
+
+/* Hide badges entirely if present */
+.hero-badges { display: none !important; }
 
 /* Distinct mirror typography (ensure after base rules) */
 .mirror-section .section-content,
