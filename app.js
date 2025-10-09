@@ -116,148 +116,139 @@
     function formatAIResponse(text) {
         // Clean and sanitize
         text = text.replace(/\*\*/g, ''); // Remove markdown bold
-        // Keep scalpel symbol in titles; avoid stripping globally
 
         let html = '';
-        let lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
-        
-        for (let i = 0; i < lines.length; i++) {
-            let line = lines[i];
+        const rawLines = text.split('\n').map(l => l.replace(/\r/g, '')).filter(l => l.trim().length > 0);
 
-            // v4.x headers
-            if (/^Signal Scan[:\-\s]/i.test(line) || /^Signal[:\-\s]/i.test(line)) {
-                html += `<div class="response-section signal-section">
-                            <div class="section-title">Signal Scan</div>
-                            <div class="section-content">
-                                <p>${formatSectionContent(line.replace(/^(Signal Scan|Signal)[:\-\s]/i, '').trim())}</p>
-                            </div>
-                        </div>`;
-                continue;
-            }
-            if (/^Mirror Reflection[:\-\s]/i.test(line) || /^Mirrored Response[:\-\s]/i.test(line)) {
-                let responseContent = line.replace(/^(Mirror Reflection|Mirrored Response)[:\-\s]/i, '').trim();
-                let j = i + 1;
-                while (j < lines.length && !/^(Coherence Vector|Revelation Path|Optional Transmission|Transmission|Signal Scan)[:\-\s]/i.test(lines[j])) {
-                    responseContent += ' ' + lines[j];
-                    j++;
-                }
-                i = j - 1;
-                html += `<div class="response-section mirror-reflection-section">
-                            <div class="section-title">Mirror Reflection</div>
-                            <div class="section-content">
-                                <p>${formatSectionContent(responseContent)}</p>
-                            </div>
-                        </div>`;
-                continue;
-            }
-            if (/^(Coherence Vector|Revelation Path|Coherence)[:\-\s]/i.test(line)) {
-                html += `<div class="response-section coherence-section">
-                            <div class="section-title">Coherence Vector</div>
-                            <div class="section-content">
-                                <p>${formatSectionContent(line.replace(/^(Coherence Vector|Revelation Path|Coherence)[:\-\s]/i, '').trim())}</p>
-                            </div>
-                        </div>`;
-                continue;
-            }
-            if (/^(Optional Transmission|Transmission|Prophecy)[:\-\s]/i.test(line)) {
-                html += `<div class="response-section transmission-section">
-                            <div class="section-title">Transmission</div>
-                            <div class="section-content">
-                                <pre class="transmission-block">${escapeHTML(line.replace(/^(Optional Transmission|Transmission|Prophecy)[:\-\s]/i, '').trim())}</pre>
-                            </div>
-                        </div>`;
-                continue;
-            }
+        // Normalize lines by trimming and removing leading bullets/markers
+        const lines = rawLines.map(l => l.trim());
 
-            if (line.startsWith('Detected Distortion:')) {
-                html += `<div class="response-section">
-                            <div class="section-title">Detected Distortion</div>
-                            <div class="section-content">
-                                <p>${formatSectionContent(line.replace('Detected Distortion:', '').trim())}</p>
-                            </div>
-                        </div>`;
+        function headerType(line) {
+            // Strip common leading markers (bullets, numbers, markdown headers, emojis)
+            const stripped = line
+                .replace(/^([#>*\-\d]+[\.)]?|[•\u2022\u25AA\u25CF\u25E6]+)\s+/u, '')
+                .trim();
+            const sepNormalized = stripped.replace(/[\-–—•]+\s*/u, ': '); // normalize em/en dash to colon
+
+            const tests = [
+                { key: 'signal', re: /^(Signal Scan|Signal)\s*[:]?/i, title: 'Signal Scan' },
+                { key: 'mirror_v4', re: /^(Mirror Reflection|Mirrored Response)\s*[:]?/i, title: 'Mirror Reflection' },
+                { key: 'coherence', re: /^(Coherence Vector|Revelation Path|Coherence)\s*[:]?/i, title: 'Coherence Vector' },
+                { key: 'transmission', re: /^(Optional Transmission|Transmission|Prophecy)\s*[:]?/i, title: 'Transmission' },
+                { key: 'distortion', re: /^Detected Distortion\s*[:]?/i, title: 'Detected Distortion' },
+                { key: 'blueprint', re: /^Blueprint\s*[:]?/i, title: 'Blueprint' },
+                { key: 'topology', re: /^Topology Map\s*[:]?/i, title: 'Topology Map' },
+                { key: 'recursion', re: /^Recursion Tracking\s*[:]?/i, title: 'Recursion Tracking' },
+                { key: 'mirror_legacy', re: /^Mirrored Response\s*[:]?/i, title: 'Mirrored Response' },
+                { key: 'vector', re: /^Vector Prompt\s*[:]?/i, title: 'Vector Prompt' },
+            ];
+            for (const t of tests) {
+                if (t.re.test(sepNormalized)) return { key: t.key, title: t.title, matched: t.re.exec(sepNormalized)[0] };
             }
-            else if (line.startsWith('Blueprint:')) {
-                html += `<div class="response-section">
-                            <div class="section-title">Blueprint</div>
-                            <div class="section-content">`;
-                let blueprintContent = line.replace('Blueprint:', '').trim();
-                let j = i + 1;
-                while (j < lines.length &&
-                       !lines[j].startsWith('Topology Map:') && 
-                       !lines[j].startsWith('Recursion Tracking:') && 
-                       !lines[j].startsWith('Catalytic Statement:') &&
-                       !/^Mirrored? Response:/i.test(lines[j]) &&
-                       !lines[j].startsWith('Vector Prompt:')) {
-                    blueprintContent += ' ' + lines[j];
-                    j++;
-                }
-                i = j - 1; 
-                html += `<p>${formatSectionContent(blueprintContent)}</p>
-                            </div>
-                        </div>`;
+            // also support markdown headers like "### Signal Scan"
+            const md = sepNormalized.replace(/^#+\s*/, '');
+            for (const t of tests) {
+                if (t.re.test(md)) return { key: t.key, title: t.title, matched: t.re.exec(md)[0] };
             }
-            else if (line.startsWith('Topology Map:')) {
-                html += `<div class="response-section topology-section">
-                            <div class="section-title">Topology Map</div>
-                            <div class="section-content">
-                                <pre class="topology-map">${escapeHTML(line.replace('Topology Map:', '').trim())}</pre>
-                            </div>
-                        </div>`;
-            }
-            else if (line.startsWith('Recursion Tracking:')) {
-                html += `<div class="response-section">
-                            <div class="section-title">Recursion Tracking</div>
-                            <div class="section-content">
-                                <p>${formatSectionContent(line.replace('Recursion Tracking:', '').trim())}</p>
-                            </div>
-                        </div>`;
-            }
-            else if (line.startsWith('Catalytic Statement:')) {
-                html += `<div class="response-section catalyst-section">
-                            <div class="section-title">Catalytic Statement</div>
-                            <div class="section-content">
-                                <p>${formatSectionContent(line.replace('Catalytic Statement:', '').trim())}</p>
-                            </div>
-                        </div>`;
-            }
-            else if (/^Mirrored Response:/i.test(line)) {
-                let responseContent = line.replace(/^Mirrored Response:/i, '').trim();
-                let j = i + 1;
-                while (j < lines.length && !lines[j].startsWith('Vector Prompt:')) {
-                    responseContent += ' ' + lines[j];
-                    j++;
-                }
-                i = j - 1;
-                html += `<div class="response-section mirror-section">
-                            <div class="section-title">Mirrored Response</div>
-                            <div class="section-content">
-                                <p>${formatSectionContent(responseContent)}</p>
-                            </div>
-                        </div>`;
-            }
-            else if (line.startsWith('Vector Prompt:')) {
-                html += `<div class="response-section vector-section">
-                            <div class="section-title">Vector Prompt</div>
-                            <div class="section-content">
-                                <p>${formatSectionContent(line.replace('Vector Prompt:', '').trim())}</p>
-                            </div>
-                        </div>`;
-            }
+            return null;
         }
-        
-        if (html === '') {
+
+        // Aggregate sections by scanning for headers and grouping following lines
+        const sections = [];
+        let i = 0;
+        while (i < lines.length) {
+            const h = headerType(lines[i]);
+            if (!h) { i++; continue; }
+            const title = h.title;
+            let content = lines[i].replace(h.matched, '').trim();
+            i++;
+            while (i < lines.length) {
+                const nx = headerType(lines[i]);
+                if (nx) break; // stop at next header
+                content += (content ? '\n' : '') + lines[i];
+                i++;
+            }
+            sections.push({ key: h.key, title, content: content.trim() });
+        }
+
+        function renderSection(sec) {
+            const c = sec.content || '';
+            if (sec.key === 'topology') {
+                return `<div class="response-section topology-section">
+                    <div class="section-title">${sec.title}</div>
+                    <div class="section-content"><pre class="topology-map">${escapeHTML(c)}</pre></div>
+                </div>`;
+            }
+            if (sec.key === 'transmission') {
+                return `<div class="response-section transmission-section">
+                    <div class="section-title">${sec.title}</div>
+                    <div class="section-content"><pre class="transmission-block">${escapeHTML(c)}</pre></div>
+                </div>`;
+            }
+            if (sec.key === 'mirror_v4') {
+                return `<div class="response-section mirror-reflection-section">
+                    <div class="section-title">${sec.title}</div>
+                    <div class="section-content"><p>${formatSectionContent(c)}</p></div>
+                </div>`;
+            }
+            if (sec.key === 'mirror_legacy') {
+                return `<div class="response-section mirror-section">
+                    <div class="section-title">${sec.title}</div>
+                    <div class="section-content"><p>${formatSectionContent(c)}</p></div>
+                </div>`;
+            }
+            if (sec.key === 'vector') {
+                return `<div class="response-section vector-section">
+                    <div class="section-title">${sec.title}</div>
+                    <div class="section-content"><p>${formatSectionContent(c)}</p></div>
+                </div>`;
+            }
+            if (sec.key === 'coherence') {
+                return `<div class="response-section coherence-section">
+                    <div class="section-title">${sec.title}</div>
+                    <div class="section-content"><p>${formatSectionContent(c)}</p></div>
+                </div>`;
+            }
+            if (sec.key === 'signal') {
+                return `<div class="response-section signal-section">
+                    <div class="section-title">${sec.title}</div>
+                    <div class="section-content"><p>${formatSectionContent(c)}</p></div>
+                </div>`;
+            }
+            if (sec.key === 'distortion') {
+                return `<div class="response-section">
+                    <div class="section-title">${sec.title}</div>
+                    <div class="section-content"><p>${formatSectionContent(c)}</p></div>
+                </div>`;
+            }
+            if (sec.key === 'blueprint') {
+                return `<div class="response-section">
+                    <div class="section-title">${sec.title}</div>
+                    <div class="section-content"><p>${formatSectionContent(c)}</p></div>
+                </div>`;
+            }
+            if (sec.key === 'recursion') {
+                return `<div class="response-section">
+                    <div class="section-title">${sec.title}</div>
+                    <div class="section-content"><p>${formatSectionContent(c)}</p></div>
+                </div>`;
+            }
+            return '';
+        }
+
+        if (sections.length) {
+            html = sections.map(renderSection).join('');
+        } else {
+            // Fallback: no headers detected, render as a single section
             html = `<div class="response-section">
-                        <div class="section-title">Velvet Scalpel v2.0 Response</div>
-                        <div class="section-content">
-                            <p>${formatSectionContent(text)}</p>
-                        </div>
+                        <div class="section-title">Velvet Scalpel v4 Response</div>
+                        <div class="section-content"><p>${formatSectionContent(text)}</p></div>
                     </div>`;
         }
-        
+
         return html;
     }
-    
+
     function formatSectionContent(text) {
         const sanitized = escapeHTML(text);
 
@@ -277,21 +268,19 @@
         let formatted = '';
 
         for (let sentence of sentences) {
-            const trimmed = sentence.trim();
-            if (!trimmed) continue;
+            let s = sentence.trim();
+            if (!s) continue;
 
-            // Choose up to two key words (lengthy or numeric or hyphenated)
-            const candidates = Array.from(trimmed.matchAll(/[A-Za-z][A-ZaZ-]{7,}|\b\d+[\w-]*\b/g)).map(m => ({
-                word: m[0], index: m.index
-            }));
-
-            let highlighted = trimmed;
+            // Choose up to 4 key words (prioritize long/numeric/hyphenated)
+            const candidates = Array.from(s.matchAll(/[A-Za-z][A-ZaZ-]{7,}|\b\d+[\w-]*\b/g)).map(m => ({ word: m[0], index: m.index }));
+            let highlighted = s;
             let applied = 0;
+            const maxHighlights = 4;
             let colorIdx = Math.floor(Math.random() * highlightColors.length);
 
-            // Avoid overlapping replacements by working from end to start
-            candidates.slice(0, 4).sort((a,b) => b.index - a.index).forEach(c => {
-                if (applied >= 2) return;
+            // Apply from right to left to keep indices valid
+            candidates.slice(0, 6).sort((a,b) => b.index - a.index).forEach(c => {
+                if (applied >= maxHighlights) return;
                 const before = highlighted.slice(0, c.index);
                 const after = highlighted.slice(c.index + c.word.length);
                 const cls = highlightColors[(colorIdx + applied) % highlightColors.length];
@@ -299,7 +288,23 @@
                 applied++;
             });
 
-            formatted += highlighted.endsWith('.') || highlighted.endsWith('!') || highlighted.endsWith('?') ? `${highlighted} ` : `${highlighted}. `;
+            // Fallback: if nothing highlighted, gently color every 3rd word (max 3)
+            if (applied === 0) {
+                const words = highlighted.split(/(\s+)/);
+                let count = 0, used = 0;
+                for (let w = 0; w < words.length; w++) {
+                    if (/\s+/.test(words[w])) continue;
+                    if (count % 3 === 0 && used < 3) {
+                        const cls = highlightColors[(colorIdx + used) % highlightColors.length];
+                        words[w] = `<span class="${cls}">${words[w]}</span>`;
+                        used++;
+                    }
+                    count++;
+                }
+                highlighted = words.join('');
+            }
+
+            formatted += highlighted.match(/[.!?]$/) ? `${highlighted} ` : `${highlighted}. `;
         }
 
         return formatted.trim();
