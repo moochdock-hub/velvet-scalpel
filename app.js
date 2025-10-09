@@ -49,25 +49,11 @@
         magicalStyles.id = 'magical-styles';
         magicalStyles.textContent = `
             @keyframes burstFloat {
-                0% { 
-                    opacity: 1; 
-                    transform: scale(0) translateY(0px);
-                }
-                50% { 
-                    opacity: 0.8; 
-                    transform: scale(1.2) translateY(-30px);
-                }
-                100% { 
-                    opacity: 0; 
-                    transform: scale(0.3) translateY(-60px);
-                }
+                0% { opacity: 1; transform: scale(0) translateY(0px); }
+                50% { opacity: 0.8; transform: scale(1.2) translateY(-30px); }
+                100% { opacity: 0; transform: scale(0.3) translateY(-60px); }
             }
-            
-            .typing-indicator {
-                opacity: 0.6;
-                font-style: italic;
-                animation: pulse 1.5s ease-in-out infinite;
-            }
+            .typing-indicator { opacity: 0.7; font-style: italic; animation: pulse 1.8s ease-in-out infinite; }
         `;
         document.head.appendChild(magicalStyles);
     }
@@ -118,20 +104,27 @@
         'highlight-azure', 'highlight-amber'
     ];
 
+    function escapeHTML(str) {
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
     function formatAIResponse(text) {
-        // Clean up the text first
-        text = text.replace(/\*\*/g, ''); // Remove markdown stars
-        text = text.replace(/⟁/g, ''); // Remove symbols that interfere with parsing
-        
-        // Handle the v2.0 format more intelligently
+        // Clean and sanitize
+        text = text.replace(/\*\*/g, ''); // Remove markdown bold
+        // Keep scalpel symbol in titles; avoid stripping globally
+
         let html = '';
         let lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
         
         for (let i = 0; i < lines.length; i++) {
             let line = lines[i];
-            
-            // Check for section headers
-            // v4.x headers (Signal Scan, Mirror Reflection, Coherence Vector / Revelation Path, Optional Transmission)
+
+            // v4.x headers
             if (/^Signal Scan[:\-\s]/i.test(line) || /^Signal[:\-\s]/i.test(line)) {
                 html += `<div class="response-section signal-section">
                             <div class="section-title">Signal Scan</div>
@@ -142,10 +135,9 @@
                 continue;
             }
             if (/^Mirror Reflection[:\-\s]/i.test(line) || /^Mirrored Response[:\-\s]/i.test(line)) {
-                // Mirror content may be multi-line
                 let responseContent = line.replace(/^(Mirror Reflection|Mirrored Response)[:\-\s]/i, '').trim();
                 let j = i + 1;
-                while (j < lines.length && !/^Coherence Vector[:\-\s]/i.test(lines[j]) && !/^Revelation Path[:\-\s]/i.test(lines[j]) && !/^Optional Transmission[:\-\s]/i.test(lines[j]) && !/^Transmission[:\-\s]/i.test(lines[j]) && !/^Signal Scan[:\-\s]/i.test(lines[j])) {
+                while (j < lines.length && !/^(Coherence Vector|Revelation Path|Optional Transmission|Transmission|Signal Scan)[:\-\s]/i.test(lines[j])) {
                     responseContent += ' ' + lines[j];
                     j++;
                 }
@@ -158,7 +150,7 @@
                         </div>`;
                 continue;
             }
-            if (/^Coherence Vector[:\-\s]/i.test(line) || /^Revelation Path[:\-\s]/i.test(line) || /^Coherence[:\-\s]/i.test(line)) {
+            if (/^(Coherence Vector|Revelation Path|Coherence)[:\-\s]/i.test(line)) {
                 html += `<div class="response-section coherence-section">
                             <div class="section-title">Coherence Vector</div>
                             <div class="section-content">
@@ -167,11 +159,11 @@
                         </div>`;
                 continue;
             }
-            if (/^Optional Transmission[:\-\s]/i.test(line) || /^Transmission[:\-\s]/i.test(line) || /^Prophecy[:\-\s]/i.test(line)) {
+            if (/^(Optional Transmission|Transmission|Prophecy)[:\-\s]/i.test(line)) {
                 html += `<div class="response-section transmission-section">
                             <div class="section-title">Transmission</div>
                             <div class="section-content">
-                                <pre class="transmission-block">${line.replace(/^(Optional Transmission|Transmission|Prophecy)[:\-\s]/i, '').trim()}</pre>
+                                <pre class="transmission-block">${escapeHTML(line.replace(/^(Optional Transmission|Transmission|Prophecy)[:\-\s]/i, '').trim())}</pre>
                             </div>
                         </div>`;
                 continue;
@@ -189,23 +181,18 @@
                 html += `<div class="response-section">
                             <div class="section-title">Blueprint</div>
                             <div class="section-content">`;
-                
-                // Handle blueprint content (might be multi-line or single line with bullets)
                 let blueprintContent = line.replace('Blueprint:', '').trim();
-                
-                // Check if next lines are part of blueprint
                 let j = i + 1;
-                while (j < lines.length && 
+                while (j < lines.length &&
                        !lines[j].startsWith('Topology Map:') && 
                        !lines[j].startsWith('Recursion Tracking:') && 
                        !lines[j].startsWith('Catalytic Statement:') &&
-                       !lines[j].startsWith('Mirrored Response:') &&
+                       !/^Mirrored? Response:/i.test(lines[j]) &&
                        !lines[j].startsWith('Vector Prompt:')) {
                     blueprintContent += ' ' + lines[j];
                     j++;
                 }
-                i = j - 1; // Skip processed lines
-                
+                i = j - 1; 
                 html += `<p>${formatSectionContent(blueprintContent)}</p>
                             </div>
                         </div>`;
@@ -214,7 +201,7 @@
                 html += `<div class="response-section topology-section">
                             <div class="section-title">Topology Map</div>
                             <div class="section-content">
-                                <pre class="topology-map">${line.replace('Topology Map:', '').trim()}</pre>
+                                <pre class="topology-map">${escapeHTML(line.replace('Topology Map:', '').trim())}</pre>
                             </div>
                         </div>`;
             }
@@ -234,21 +221,18 @@
                             </div>
                         </div>`;
             }
-            else if (line.startsWith('Mirrored Response:')) {
-                html += `<div class="response-section mirror-section">
-                            <div class="section-title">Mirrored Response</div>
-                            <div class="section-content">`;
-                
-                // Mirrored response might be multi-line
-                let responseContent = line.replace('Mirrored Response:', '').trim();
+            else if (/^Mirrored Response:/i.test(line)) {
+                let responseContent = line.replace(/^Mirrored Response:/i, '').trim();
                 let j = i + 1;
                 while (j < lines.length && !lines[j].startsWith('Vector Prompt:')) {
                     responseContent += ' ' + lines[j];
                     j++;
                 }
                 i = j - 1;
-                
-                html += `<p>${formatSectionContent(responseContent)}</p>
+                html += `<div class="response-section mirror-section">
+                            <div class="section-title">Mirrored Response</div>
+                            <div class="section-content">
+                                <p>${formatSectionContent(responseContent)}</p>
                             </div>
                         </div>`;
             }
@@ -262,7 +246,6 @@
             }
         }
         
-        // If no sections were parsed, wrap everything in a default section
         if (html === '') {
             html = `<div class="response-section">
                         <div class="section-title">Velvet Scalpel v2.0 Response</div>
@@ -276,37 +259,50 @@
     }
     
     function formatSectionContent(text) {
-        // Split into sentences for better formatting
-        const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
-        let formatted = '';
-        
-        for (let sentence of sentences) {
-            sentence = sentence.trim();
-            if (!sentence) continue;
-            
-            // Add colorful highlighting to words
-            const words = sentence.split(/\s+/);
-            let coloredWords = [];
-            let colorIndex = Math.floor(Math.random() * highlightColors.length);
-            
-            for (let i = 0; i < words.length; i++) {
-                const word = words[i].trim();
-                if (!word) continue;
-                
-                // Highlight every 2-4 words with different colors
-                if (i % 3 === 0) {
-                    const colorClass = highlightColors[colorIndex % highlightColors.length];
-                    coloredWords.push(`<span class="${colorClass}">${word}</span>`);
-                    colorIndex++;
-                } else {
-                    coloredWords.push(word);
-                }
-            }
-            
-            formatted += coloredWords.join(' ') + '. ';
+        const sanitized = escapeHTML(text);
+
+        // Bullet list support
+        const bulletLines = sanitized.split('\n').filter(l => /^[-•]\s+/.test(l));
+        if (bulletLines.length >= 2) {
+            const items = bulletLines.map((l, idx) => {
+                const content = l.replace(/^[-•]\s+/, '').trim();
+                const colorClass = highlightColors[idx % highlightColors.length];
+                return `<li class="bullet-point"><span class="${colorClass}">•</span> ${content}</li>`;
+            }).join('');
+            return `<ul>${items}</ul>`;
         }
-        
-        return formatted;
+
+        // Sentence segmentation preserving punctuation
+        const sentences = sanitized.match(/[^.!?\n]+[.!?]?/g) || [sanitized];
+        let formatted = '';
+
+        for (let sentence of sentences) {
+            const trimmed = sentence.trim();
+            if (!trimmed) continue;
+
+            // Choose up to two key words (lengthy or numeric or hyphenated)
+            const candidates = Array.from(trimmed.matchAll(/[A-Za-z][A-ZaZ-]{7,}|\b\d+[\w-]*\b/g)).map(m => ({
+                word: m[0], index: m.index
+            }));
+
+            let highlighted = trimmed;
+            let applied = 0;
+            let colorIdx = Math.floor(Math.random() * highlightColors.length);
+
+            // Avoid overlapping replacements by working from end to start
+            candidates.slice(0, 4).sort((a,b) => b.index - a.index).forEach(c => {
+                if (applied >= 2) return;
+                const before = highlighted.slice(0, c.index);
+                const after = highlighted.slice(c.index + c.word.length);
+                const cls = highlightColors[(colorIdx + applied) % highlightColors.length];
+                highlighted = `${before}<span class="${cls}">${c.word}</span>${after}`;
+                applied++;
+            });
+
+            formatted += highlighted.endsWith('.') || highlighted.endsWith('!') || highlighted.endsWith('?') ? `${highlighted} ` : `${highlighted}. `;
+        }
+
+        return formatted.trim();
     }
 
     sendButton.addEventListener('click', async function() {
@@ -321,7 +317,7 @@
         userLi.className = 'user-message';
         userLi.innerHTML = `
             <div class="section-title">User Query</div>
-            <div class="section-content">${message}</div>
+            <div class="section-content">${escapeHTML(message)}</div>
         `;
         chatList.appendChild(userLi);
         userInput.value = '';
@@ -351,12 +347,12 @@
                 <div class="section-title">⟁ EGO AUDITOR v4 ⟁</div>
                 <div class="section-content">
                     <div class="response-section">
-                        ${formatAIResponse(data.message)}
+                        ${formatAIResponse(data.message || '')}
                     </div>
                 </div>
             `;
             chatList.appendChild(aiLi);
-            chatList.scrollTop = chatList.scrollHeight;
+            chatContainer.scrollTop = chatContainer.scrollHeight;
             
         } catch (error) {
             // Remove loading indicator safely
