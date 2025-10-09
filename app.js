@@ -113,9 +113,16 @@
             .replace(/'/g, '&#039;');
     }
 
+    // Decode existing HTML entities (to avoid double-escaping like &amp;#039;)
+    function decodeHTMLEntities(str) {
+        const textarea = document.createElement('textarea');
+        textarea.innerHTML = str;
+        return textarea.value;
+    }
+
     function formatAIResponse(text) {
-        // Clean and sanitize
-        text = text.replace(/\*\*/g, ''); // Remove markdown bold
+        // Clean and sanitize base text (remove markdown bold)
+        text = text.replace(/\*\*/g, '');
 
         let html = '';
         const rawLines = text.split('\n').map(l => l.replace(/\r/g, '')).filter(l => l.trim().length > 0);
@@ -176,13 +183,13 @@
             if (sec.key === 'topology') {
                 return `<div class="response-section topology-section">
                     <div class="section-title">${sec.title}</div>
-                    <div class="section-content"><pre class="topology-map">${escapeHTML(c)}</pre></div>
+                    <div class="section-content"><pre class="topology-map">${escapeHTML(decodeHTMLEntities(c))}</pre></div>
                 </div>`;
             }
             if (sec.key === 'transmission') {
                 return `<div class="response-section transmission-section">
                     <div class="section-title">${sec.title}</div>
-                    <div class="section-content"><pre class="transmission-block">${escapeHTML(c)}</pre></div>
+                    <div class="section-content"><pre class="transmission-block">${escapeHTML(decodeHTMLEntities(c))}</pre></div>
                 </div>`;
             }
             if (sec.key === 'mirror_v4') {
@@ -250,7 +257,9 @@
     }
 
     function formatSectionContent(text) {
-        const sanitized = escapeHTML(text);
+        // Decode any entities from the model first to avoid &amp;#039; artifacts
+        const decoded = decodeHTMLEntities(text);
+        const sanitized = escapeHTML(decoded);
 
         // Bullet list support
         const bulletLines = sanitized.split('\n').filter(l => /^[-•]\s+/.test(l));
