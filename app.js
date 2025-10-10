@@ -392,7 +392,7 @@
             const aiLi = document.createElement('li');
             aiLi.className = 'ai-message';
             aiLi.innerHTML = `
-                <div class="section-title">⟁ EGO AUDITOR v4 ⟁</div>
+                <div class="section-title">⟁ The Velvet Scalpel ⟁</div>
                 <div class="section-content">
                     <div class="response-section">
                         ${formatAIResponse(data.message || '')}
