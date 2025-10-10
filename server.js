@@ -117,7 +117,7 @@ app.post('/api/chat', async (req, res) => {
                     },
                     { role: 'user', content: userMessage }
                 ],
-                temperature: 1.1
+                temperature: 0.72
             })
         });
 
