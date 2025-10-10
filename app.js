@@ -104,26 +104,36 @@
         'highlight-azure', 'highlight-amber'
     ];
 
+    // Deep-decode existing HTML entities (handles &amp;#039; → ' without re-escaping)
+    function decodeHTMLEntities(str) {
+        if (!str) return '';
+        let prev = null, cur = String(str);
+        const textarea = document.createElement('textarea');
+        let safety = 0;
+        while (cur !== prev && safety < 5) {
+            safety++;
+            prev = cur;
+            textarea.innerHTML = prev;
+            cur = textarea.value;
+        }
+        return cur;
+    }
+
+    // Sanitize without converting apostrophes to entities (avoid visual &#039;)
     function escapeHTML(str) {
-        return str
+        return String(str)
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#039;');
-    }
-
-    // Decode existing HTML entities (to avoid double-escaping like &amp;#039;)
-    function decodeHTMLEntities(str) {
-        const textarea = document.createElement('textarea');
-        textarea.innerHTML = str;
-        return textarea.value;
+            .replace(/\"/g, '&quot;');
+            // Note: do NOT replace single quote to keep crisp apostrophes
     }
 
     function formatAIResponse(text) {
-        // Clean and sanitize base text (remove markdown bold)
+        // Normalize and decode before any parsing
         text = text.replace(/\*\*/g, '');
-
+        text = decodeHTMLEntities(text);
+        
         let html = '';
         const rawLines = text.split('\n').map(l => l.replace(/\r/g, '')).filter(l => l.trim().length > 0);
 
@@ -261,7 +271,7 @@
         // Decode any entities from the model first to avoid &amp;#039; artifacts
         const decoded = decodeHTMLEntities(text);
         const sanitized = escapeHTML(decoded);
-
+        
         // Bullet list support
         const bulletLines = sanitized.split('\n').filter(l => /^[-•]\s+/.test(l));
         if (bulletLines.length >= 2) {
