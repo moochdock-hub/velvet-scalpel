@@ -34,6 +34,17 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// Simple health endpoint for system testing
+app.get('/api/health', async (req, res) => {
+    const hasKey = Boolean(process.env.OPENAI_API_KEY);
+    return res.status(200).json({
+        status: 'ok',
+        openaiKeyConfigured: hasKey,
+        model: 'gpt-4o-mini (test)',
+        time: new Date().toISOString()
+    });
+});
+
 app.post('/api/chat', async (req, res) => {
     const userMessage = req.body.message;
 
@@ -49,7 +60,7 @@ app.post('/api/chat', async (req, res) => {
                 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
             },
             body: JSON.stringify({
-                model: 'gpt-4o',
+                model: 'gpt-4o-mini',
                 messages: [
                     {
                         role: 'system',
