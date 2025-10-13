@@ -36,6 +36,9 @@ A sophisticated AI chat application powered by OpenAI's GPT-4o, featuring mystic
    ```bash
    npm start
    ```
+   
+Note: Do not run non-JavaScript files with node (for example files in `.github/chatmodes/`).
+Use `npm start` or the included VS Code launch configuration (`.vscode/launch.json`) which runs `run-server.js` to safely start the server.
 
 5. **Open your browser**
    Navigate to `http://localhost:3000`

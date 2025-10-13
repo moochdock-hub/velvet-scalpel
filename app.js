@@ -97,12 +97,38 @@
         return typingLi;
     }
 
-    // Color classes for highlighting
+    // Color classes retained for compatibility (highlighting disabled)
     const highlightColors = [
         'highlight-violet', 'highlight-cyan', 'highlight-gold', 
         'highlight-rose', 'highlight-emerald', 'highlight-coral',
         'highlight-azure', 'highlight-amber'
     ];
+
+    // Highlighting configuration (persisted)
+    const HIGHLIGHT_KEY = 'velvet_highlight';
+    let HIGHLIGHT_ENABLED = (function(){
+        try { return localStorage.getItem(HIGHLIGHT_KEY) !== 'false'; } catch(e){ return true; }
+    })();
+    const HIGHLIGHT_PROBABILITY = 0.12; // probability to highlight a qualifying word
+
+    // Create a small toggle in the header to enable/disable highlights
+    (function createHighlightToggle(){
+        const headerEl = document.querySelector('header');
+        if (!headerEl) return;
+        const btn = document.createElement('button');
+        btn.id = 'highlight-toggle';
+        btn.className = 'begin-button';
+        btn.style.padding = '6px 10px';
+        btn.style.fontSize = '0.8rem';
+        btn.style.marginLeft = '12px';
+        btn.textContent = HIGHLIGHT_ENABLED ? 'Highlights: ON' : 'Highlights: OFF';
+        btn.addEventListener('click', () => {
+            HIGHLIGHT_ENABLED = !HIGHLIGHT_ENABLED;
+            try { localStorage.setItem(HIGHLIGHT_KEY, HIGHLIGHT_ENABLED ? 'true' : 'false'); } catch(e){}
+            btn.textContent = HIGHLIGHT_ENABLED ? 'Highlights: ON' : 'Highlights: OFF';
+        });
+        headerEl.appendChild(btn);
+    })();
 
     function normalizeEmphasis(src) {
         // Preserve emphasis before sanitization/parsing
@@ -220,34 +246,29 @@
         }
 
         function formatInline(text) {
-            // Highlight logic reused but after decode+sanitize
+            // No color highlighting; keep emphasis and code
             const sanitized = escapeHTML(text)
                 .replace(/&lt;strong&gt;([\s\S]*?)&lt;\/strong&gt;/g, '<strong>$1</strong>')
                 .replace(/&lt;em&gt;([\s\S]*?)&lt;\/em&gt;/g, '<em>$1</em>')
                 .replace(/&lt;code&gt;([\s\S]*?)&lt;\/code&gt;/g, '<code>$1</code>');
-
-            // Sentence segmentation
-            const sentences = sanitized.match(/[^.!?\n]+[.!?]?/g) || [sanitized];
-            let formatted = '';
-            for (let sentence of sentences) {
-                let s = sentence.trim();
-                if (!s) continue;
-                const candidates = Array.from(s.matchAll(/[A-Za-z][A-Za-z-]{7,}|\b\d+[\w-]*\b/g)).map(m => ({ word: m[0], index: m.index }));
-                let highlighted = s;
-                let applied = 0;
-                const maxHighlights = 3;
-                let colorIdx = Math.floor(Math.random() * highlightColors.length);
-                candidates.slice(0, 6).sort((a,b) => b.index - a.index).forEach(c => {
-                    if (applied >= maxHighlights) return;
-                    const before = highlighted.slice(0, c.index);
-                    const after = highlighted.slice(c.index + c.word.length);
-                    const cls = highlightColors[(colorIdx + applied) % highlightColors.length];
-                    highlighted = `${before}<span class="${cls}">${c.word}</span>${after}`;
-                    applied++;
-                });
-                formatted += highlighted.match(/[.!?]$/) ? `${highlighted} ` : `${highlighted}. `;
+            // Apply optional word-level highlighting but avoid touching HTML tags (preserve code blocks)
+            function applyHighlights(html) {
+                if (!HIGHLIGHT_ENABLED) return html;
+                // Split by tags so we only manipulate text nodes
+                return html.split(/(<[^>]+>)/g).map(part => {
+                    if (part.startsWith('<')) return part;
+                    // Highlight qualifying words (4+ letters) with a probability
+                    return part.replace(/\b([A-Za-z]{4,})\b/g, (m) => {
+                        if (Math.random() < HIGHLIGHT_PROBABILITY) {
+                            const cls = highlightColors[Math.floor(Math.random() * highlightColors.length)];
+                            return `<span class="${cls}">${m}</span>`;
+                        }
+                        return m;
+                    });
+                }).join('');
             }
-            return formatted.trim();
+
+            return applyHighlights(sanitized);
         }
 
         function renderSection(sec) {

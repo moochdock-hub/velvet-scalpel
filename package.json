@@ -4,8 +4,8 @@
   "description": "A mystical AI chat application using OpenAI's GPT-4o with enhanced v2.0 format and beautiful typography.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js",
+  "start": "node run-server.js",
+  "dev": "node run-server.js",
     "deploy": "git add . && git commit -m 'Deploy update' && git push origin main",
     "install-prod": "npm install --production"
   },
