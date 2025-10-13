@@ -109,7 +109,7 @@
     let HIGHLIGHT_ENABLED = (function(){
         try { return localStorage.getItem(HIGHLIGHT_KEY) !== 'false'; } catch(e){ return true; }
     })();
-    const HIGHLIGHT_PROBABILITY = 0.12; // probability to highlight a qualifying word
+    const HIGHLIGHT_PROBABILITY = 0.30; // probability to highlight a qualifying word (increased intensity)
 
     // Create a small toggle in the header to enable/disable highlights
     (function createHighlightToggle(){

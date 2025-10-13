@@ -461,6 +461,21 @@ main { padding: 28px; }
 .highlight-azure { color: #b1e2ff; font-weight: 600; }
 .highlight-amber { color: #ffe59a; font-weight: 600; }
 
+/* Intensified highlight treatments */
+.response-section .highlight-violet,
+.response-section .highlight-cyan,
+.response-section .highlight-gold,
+.response-section .highlight-rose,
+.response-section .highlight-emerald,
+.response-section .highlight-coral,
+.response-section .highlight-azure,
+.response-section .highlight-amber {
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: rgba(166,121,255,0.06);
+    box-shadow: 0 4px 14px rgba(138,43,226,0.08) inset;
+}
+
 /* Slightly increase contrast for mirror/reflection body */
 .mirror-section .section-content,
 .mirror-reflection-section .section-content {
