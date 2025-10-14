@@ -91,22 +91,31 @@ app.get('/', (req, res) => {
 // Simple health endpoint for system testing
 app.get('/api/health', async (req, res) => {
     const hasKey = Boolean(process.env.OPENAI_API_KEY);
+    const det = String(process.env.DETERMINISTIC).toLowerCase() === 'true' || req.query.det === '1';
+    const now = det ? (process.env.FIXED_TIME || '2025-10-13T00:00:00.000Z') : new Date().toISOString();
     return res.status(200).json({
         status: 'ok',
         openaiKeyConfigured: hasKey,
         model: 'gpt-4o-mini (test)',
-        time: new Date().toISOString()
+        time: now
     });
 });
 
 app.post('/api/chat', async (req, res) => {
     const userMessage = req.body.message;
+    const det = String(process.env.DETERMINISTIC).toLowerCase() === 'true' || req.query.det === '1';
 
     if (!userMessage || userMessage.length < 1) {
         return res.status(400).json({ error: 'EDGE INVALID: message must not be empty' });
     }
 
     try {
+        if (det || !process.env.OPENAI_API_KEY) {
+            // Deterministic canned response for testing or when API key is missing
+            const canned = `⌖ The Velvet Scalpel // Deterministic test response.\n\n[RESONANCE CAPTURE] 訊 – Your test input was received and mirrored back with deterministic clarity.`;
+            return res.json({ message: canned });
+        }
+
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',
             headers: {

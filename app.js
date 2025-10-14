@@ -6,20 +6,60 @@
     const introSection = document.getElementById('intro-section');
     const chatContainer = document.getElementById('chat-container');
 
+    // Deterministic RNG (seedable). Seed sources: URL param `?seed=123`, or localStorage `velvet_seed`.
+    function mulberry32(a) {
+        return function() {
+            a |= 0;
+            a = (a + 0x6D2B79F5) | 0;
+            var t = Math.imul(a ^ (a >>> 15), 1 | a);
+            t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+    }
+
+    const DEFAULT_SEED = 13371337;
+    let initialSeed = DEFAULT_SEED;
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const p = params.get('seed');
+        if (p !== null) initialSeed = Number(p) || DEFAULT_SEED;
+        else if (window.localStorage && window.localStorage.getItem('velvet_seed')) {
+            const ls = Number(window.localStorage.getItem('velvet_seed'));
+            if (!Number.isNaN(ls)) initialSeed = ls;
+        }
+    } catch (e) {
+        // ignore and use default
+    }
+    const random = mulberry32(initialSeed);
+
     // Mystical Effects Functions
     function createMagicalParticle(x, y) {
         const particle = document.createElement('div');
         particle.className = 'magical-burst';
+        // Vibrant color palette for particles
+        const vibrantColors = [
+            '#FF1744', '#F50057', '#D500F9', '#651FFF', '#2979FF',
+            '#00B8D4', '#00E676', '#76FF03', '#FFEA00', '#FFC400',
+            '#FF9100', '#FF3D00', '#C51162', '#AA00FF', '#304FFE',
+            '#00BFAE', '#64DD17', '#FFD600', '#FF6D00', '#DD2C00'
+        ];
+        // Pick two different colors for gradient
+        const idx1 = Math.floor(random() * vibrantColors.length);
+        let idx2 = Math.floor(random() * vibrantColors.length);
+        if (idx2 === idx1) idx2 = (idx2 + 1) % vibrantColors.length;
+        const color1 = vibrantColors[idx1];
+        const color2 = vibrantColors[idx2];
         particle.style.cssText = `
             position: fixed;
             left: ${x}px;
             top: ${y}px;
-            width: 6px;
-            height: 6px;
-            background: radial-gradient(circle, #8a2be2, #ff69b4);
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, ${color1}, ${color2});
             border-radius: 50%;
             pointer-events: none;
             z-index: 1000;
+            box-shadow: 0 0 16px 4px ${color1}99, 0 0 32px 8px ${color2}55;
             animation: burstFloat 2s ease-out forwards;
         `;
         
@@ -35,8 +75,8 @@
             for(let i = 0; i < 5; i++) {
                 setTimeout(() => {
                     createMagicalParticle(
-                        e.clientX + (Math.random() - 0.5) * 50,
-                        e.clientY + (Math.random() - 0.5) * 50
+                        e.clientX + (random() - 0.5) * 50,
+                        e.clientY + (random() - 0.5) * 50
                     );
                 }, i * 100);
             }
@@ -360,17 +400,27 @@
     // Stardust field
     (function createStardustField() {
         const count = 60; // balanced amount
+        const vibrantColors = [
+            '#FF1744', '#F50057', '#D500F9', '#651FFF', '#2979FF',
+            '#00B8D4', '#00E676', '#76FF03', '#FFEA00', '#FFC400',
+            '#FF9100', '#FF3D00', '#C51162', '#AA00FF', '#304FFE',
+            '#00BFAE', '#64DD17', '#FFD600', '#FF6D00', '#DD2C00'
+        ];
         const frag = document.createDocumentFragment();
         for (let i = 0; i < count; i++) {
             const s = document.createElement('div');
             s.className = 'stardust';
-            const left = Math.random() * 100;
-            const top = Math.random() * 100;
-            const delay = (Math.random() * 4).toFixed(2) + 's';
-            const dur = (2 + Math.random() * 3).toFixed(2) + 's';
-            const size = Math.random() < 0.2 ? 3 : 2; // a few brighter points
+            const left = random() * 100;
+            const top = random() * 100;
+            const delay = (random() * 4).toFixed(2) + 's';
+            const dur = (2 + random() * 3).toFixed(2) + 's';
+            const size = random() < 0.2 ? 3 : 2; // a few brighter points
+            // Pick a vibrant color for each stardust
+            const color = vibrantColors[Math.floor(random() * vibrantColors.length)];
             s.style.left = left + 'vw';
             s.style.top = top + 'vh';
+            s.style.background = color;
+            s.style.boxShadow = `0 0 12px 2px ${color}99, 0 0 24px 6px ${color}55`;
             s.style.setProperty('--d', delay);
             s.style.setProperty('--t', dur);
             s.style.width = size + 'px';

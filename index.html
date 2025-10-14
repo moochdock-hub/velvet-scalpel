@@ -27,7 +27,11 @@
                 <div class="intro-content">
                     <p class="intro-one">Names the pattern. Shows where to cut.</p>
                     <div class="neon-divider" aria-hidden="true"></div>
-                    <button id="begin-session" class="begin-button">◊ Begin Diagnostic Session ◊</button>
+                    <button id="begin-session" class="begin-button">
+                        <span class="decor" aria-hidden="true">◊</span>
+                        <span class="btn-text">Begin Diagnostic Session</span>
+                        <span class="decor" aria-hidden="true">◊</span>
+                    </button>
                 </div>
             </div>
             <div id="chat-container" class="chat-hidden">
@@ -36,7 +40,10 @@
             <!-- Composer: wraps input and send for better layout -->
             <div class="composer" aria-label="Message composer">
                 <textarea id="user-input" placeholder="Type your message..." aria-label="Your message"></textarea>
-                <button id="send-button" aria-label="Send message">Send</button>
+                <button id="send-button" aria-label="Send message">
+                    <span class="decor-left" aria-hidden="true">✦</span>
+                    <span class="btn-text">Send</span>
+                </button>
             </div>
         </main>
     </div>
