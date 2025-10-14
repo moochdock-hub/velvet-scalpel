@@ -517,6 +517,47 @@ h1 .highlight-violet, h1 .highlight-cyan, h1 .highlight-gold, h1 .highlight-rose
     transform: translateZ(0);
 }
 
+/* Alternate palettes: scope overrides on body class without breaking structure */
+/* NEON (default look) */
+body.palette-neon .highlight-violet { color: #f3e8ff; background: linear-gradient(90deg,#7c4dff22,#b085ff22); }
+body.palette-neon .highlight-cyan { color: #e6ffff; background: linear-gradient(90deg,#00d2ff22,#66f0ff22); }
+body.palette-neon .highlight-gold { color: #3b2b00; background: linear-gradient(90deg,#ffd54f22,#ffb30022); }
+body.palette-neon .highlight-rose { color: #fff0f6; background: linear-gradient(90deg,#ff80ab22,#ff4d8a22); }
+body.palette-neon .highlight-emerald { color: #002915; background: linear-gradient(90deg,#7ef6c822,#3beea822); }
+body.palette-neon .highlight-coral { color: #3b0b00; background: linear-gradient(90deg,#ff8a651f,#ff6f3a22); }
+body.palette-neon .highlight-azure { color: #001b2b; background: linear-gradient(90deg,#b3ecff22,#66d9ff22); }
+body.palette-neon .highlight-amber { color: #2b1900; background: linear-gradient(90deg,#ffe57f22,#ffd14722); }
+
+/* OCEAN: cool blues/teals */
+body.palette-ocean .highlight-violet { color: #e5f0ff; background: linear-gradient(90deg,#3f51b522,#5c6bc022); }
+body.palette-ocean .highlight-cyan { color: #eaffff; background: linear-gradient(90deg,#00bcd422,#26c6da22); }
+body.palette-ocean .highlight-gold { color: #001a26; background: linear-gradient(90deg,#7ad1ff22,#46b8ff22); }
+body.palette-ocean .highlight-rose { color: #e8f6ff; background: linear-gradient(90deg,#5db2ff22,#7acbff22); }
+body.palette-ocean .highlight-emerald { color: #001f1f; background: linear-gradient(90deg,#00e5ff22,#00acc122); }
+body.palette-ocean .highlight-coral { color: #00161f; background: linear-gradient(90deg,#26a69a22,#00bfae22); }
+body.palette-ocean .highlight-azure { color: #001a2b; background: linear-gradient(90deg,#80d8ff22,#40c4ff22); }
+body.palette-ocean .highlight-amber { color: #00222b; background: linear-gradient(90deg,#64ffda22,#18ffff22); }
+
+/* SUNSET: warm amber/coral/rose */
+body.palette-sunset .highlight-violet { color: #2b0a18; background: linear-gradient(90deg,#ff80ab22,#ff408122); }
+body.palette-sunset .highlight-cyan { color: #2b1400; background: linear-gradient(90deg,#ffd18022,#ffab4022); }
+body.palette-sunset .highlight-gold { color: #2b1900; background: linear-gradient(90deg,#ffd54f22,#ff910022); }
+body.palette-sunset .highlight-rose { color: #2b0a18; background: linear-gradient(90deg,#ff8a8022,#ff6e4022); }
+body.palette-sunset .highlight-emerald { color: #2b1a00; background: linear-gradient(90deg,#ffd54f22,#ff704322); }
+body.palette-sunset .highlight-coral { color: #2b0d03; background: linear-gradient(90deg,#ff8a6522,#ff704322); }
+body.palette-sunset .highlight-azure { color: #2b0a18; background: linear-gradient(90deg,#ffb3c722,#ff80ab22); }
+body.palette-sunset .highlight-amber { color: #2b1400; background: linear-gradient(90deg,#ffe57f22,#ffca2822); }
+
+/* MONO: high-contrast grayscale with subtle accent */
+body.palette-mono .highlight-violet { color: #111; background: linear-gradient(90deg,#f0f0f022,#e0e0e022); }
+body.palette-mono .highlight-cyan { color: #111; background: linear-gradient(90deg,#ededed22,#dbdbdb22); }
+body.palette-mono .highlight-gold { color: #111; background: linear-gradient(90deg,#f3f3f322,#e4e4e422); }
+body.palette-mono .highlight-rose { color: #111; background: linear-gradient(90deg,#efefef22,#dedede22); }
+body.palette-mono .highlight-emerald { color: #111; background: linear-gradient(90deg,#f2f2f222,#e6e6e622); }
+body.palette-mono .highlight-coral { color: #111; background: linear-gradient(90deg,#ececec22,#dcdcdc22); }
+body.palette-mono .highlight-azure { color: #111; background: linear-gradient(90deg,#ededed22,#dcdcdc22); }
+body.palette-mono .highlight-amber { color: #111; background: linear-gradient(90deg,#f7f7f722,#e8e8e822); }
+
 /* Slightly increase contrast for mirror/reflection body */
 .mirror-section .section-content,
 .mirror-reflection-section .section-content {

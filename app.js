@@ -149,6 +149,26 @@
     let HIGHLIGHT_ENABLED = (function(){
         try { return localStorage.getItem(HIGHLIGHT_KEY) !== 'false'; } catch(e){ return true; }
     })();
+    // Palette configuration (persisted)
+    const PALETTE_KEY = 'velvet_palette';
+    const PALETTES = ['neon','ocean','sunset','mono'];
+    let CURRENT_PALETTE = (function(){
+        try {
+            const p = localStorage.getItem(PALETTE_KEY) || 'neon';
+            return PALETTES.includes(p) ? p : 'neon';
+        } catch(e){ return 'neon'; }
+    })();
+    function applyPalette(p){
+        try {
+            const body = document.body || document.documentElement;
+            for (const name of PALETTES) body.classList.remove('palette-' + name);
+            body.classList.add('palette-' + p);
+            try { localStorage.setItem(PALETTE_KEY, p); } catch(e){}
+            CURRENT_PALETTE = p;
+        } catch(e){}
+    }
+    // Apply palette at startup
+    applyPalette(CURRENT_PALETTE);
     // Deterministic highlighting: keywords that should always be emphasized
     const HIGHLIGHT_KEYWORDS = [
         'signal', 'resonance', 'trajectory', 'pattern', 'distortion', 'coherence', 'mirror', 'architecture', 'trajectory', 'excavate', 'attunement', 'entropy', 'alignment', 'system', 'diagnostic', 'truth'
@@ -169,6 +189,29 @@
             HIGHLIGHT_ENABLED = !HIGHLIGHT_ENABLED;
             try { localStorage.setItem(HIGHLIGHT_KEY, HIGHLIGHT_ENABLED ? 'true' : 'false'); } catch(e){}
             btn.textContent = HIGHLIGHT_ENABLED ? 'Highlights: ON' : 'Highlights: OFF';
+        });
+        headerEl.appendChild(btn);
+    })();
+
+    // Create a small toggle in the header to cycle palettes (neon/ocean/sunset/mono)
+    (function createPaletteToggle(){
+        const headerEl = document.querySelector('header');
+        if (!headerEl) return;
+        const btn = document.createElement('button');
+        btn.id = 'palette-toggle';
+        btn.className = 'begin-button';
+        btn.style.padding = '6px 10px';
+        btn.style.fontSize = '0.8rem';
+        btn.style.marginLeft = '8px';
+        function label(p){
+            return 'Palette: ' + (p.charAt(0).toUpperCase() + p.slice(1));
+        }
+        btn.textContent = label(CURRENT_PALETTE);
+        btn.addEventListener('click', () => {
+            const idx = PALETTES.indexOf(CURRENT_PALETTE);
+            const next = PALETTES[(idx + 1) % PALETTES.length];
+            applyPalette(next);
+            btn.textContent = label(next);
         });
         headerEl.appendChild(btn);
     })();
@@ -294,24 +337,84 @@
                 .replace(/&lt;strong&gt;([\s\S]*?)&lt;\/strong&gt;/g, '<strong>$1</strong>')
                 .replace(/&lt;em&gt;([\s\S]*?)&lt;\/em&gt;/g, '<em>$1</em>')
                 .replace(/&lt;code&gt;([\s\S]*?)&lt;\/code&gt;/g, '<code>$1</code>');
-            // Apply optional word-level highlighting but avoid touching HTML tags (preserve code blocks)
+            // Apply optional word-level highlighting while preserving HTML structure and code blocks
             function applyHighlights(html) {
                 if (!HIGHLIGHT_ENABLED) return html;
-                // Split by tags so we only manipulate text nodes
-                return html.split(/(<[^>]+>)/g).map(part => {
-                    if (part.startsWith('<')) return part;
-                    // Deterministic keyword highlighting: always highlight keywords (case-insensitive)
-                    return part.replace(/\b([A-Za-z]{3,})\b/g, (m) => {
-                        const lower = m.toLowerCase();
-                        if (HIGHLIGHT_ENABLED && HIGHLIGHT_KEYWORDS.includes(lower)) {
-                            // choose a color based on simple hash so it's deterministic
-                            let hash = 0; for (let i=0;i<lower.length;i++) hash = (hash*31 + lower.charCodeAt(i)) & 0xffffffff;
-                            const cls = highlightColors[Math.abs(hash) % highlightColors.length];
-                            return `<span class="${cls}">${m}</span>`;
+
+                // Tokenize by tags to avoid altering tag structures; track whether inside <code> or <pre>
+                const tokens = html.split(/(<[^>]+>)/g);
+                let inCode = false;
+                let inPre = false;
+                let wordIndex = 0; // counts words in current block
+                let blockSeq = 0;  // increments on paragraph/list/blockquote boundaries
+
+                function strHash(str) {
+                    let h = 0; for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) | 0; return h;
+                }
+
+                function resetBlock() {
+                    // Deterministic interval per block: 4–7 words
+                    // Use blockSeq-based hash instead of consuming RNG to make it stable to earlier content changes
+                    const base = Math.abs(strHash('block:' + blockSeq)) % 4; // 0..3
+                    const interval = 4 + base; // 4..7
+                    const offset = Math.abs(strHash('offset:' + blockSeq)) % interval; // 0..interval-1
+                    wordIndex = -offset; // so that first highlight occurs when wordIndex % interval === 0
+                    blockSeq++;
+                    return interval;
+                }
+
+                let currentInterval = resetBlock();
+
+                const openingTagRe = /^<\s*([a-zA-Z0-9:-]+)/;
+                const closingTagRe = /^<\s*\/\s*([a-zA-Z0-9:-]+)/;
+                const blockResetTags = new Set(['p','li','ul','ol','blockquote','br','div']);
+
+                for (let i = 0; i < tokens.length; i++) {
+                    const t = tokens[i];
+                    if (t.startsWith('<')) {
+                        // Track code/pre regions
+                        const open = openingTagRe.exec(t);
+                        const close = closingTagRe.exec(t);
+                        if (open) {
+                            const tag = open[1].toLowerCase();
+                            if (tag === 'code') inCode = true;
+                            if (tag === 'pre') inPre = true;
+                            if (blockResetTags.has(tag)) currentInterval = resetBlock();
+                        } else if (close) {
+                            const tag = close[1].toLowerCase();
+                            if (tag === 'code') inCode = false;
+                            if (tag === 'pre') inPre = false;
+                            if (blockResetTags.has(tag)) currentInterval = resetBlock();
                         }
-                        return m;
-                    });
-                }).join('');
+                        continue; // tags remain unchanged
+                    }
+
+                    // Process text nodes only when not inside code/pre
+                    if (!inCode && !inPre) {
+                        // Replace words while tracking position; keep non-word separators intact
+                        tokens[i] = t.replace(/\b([A-Za-z]{3,})\b/g, (m) => {
+                            const lower = m.toLowerCase();
+
+                            // Always highlight configured keywords using hash-based class selection
+                            if (HIGHLIGHT_KEYWORDS.includes(lower)) {
+                                const h = strHash('kw:' + lower);
+                                const cls = highlightColors[Math.abs(h) % highlightColors.length];
+                                return `<span class="${cls}">${m}</span>`;
+                            }
+
+                            // Interval-based highlighting: every 4–7 words deterministically per block
+                            const idx = wordIndex++;
+                            const shouldHighlight = (idx >= 0) && (idx % currentInterval === 0);
+                            if (!shouldHighlight) return m;
+
+                            // Pick class deterministically using word + position hash (stable across loads)
+                            const h = strHash(`w:${lower}#${idx}@${currentInterval}`);
+                            const cls = highlightColors[Math.abs(h) % highlightColors.length];
+                            return `<span class="${cls}">${m}</span>`;
+                        });
+                    }
+                }
+                return tokens.join('');
             }
 
             return applyHighlights(sanitized);
