@@ -109,7 +109,10 @@
     let HIGHLIGHT_ENABLED = (function(){
         try { return localStorage.getItem(HIGHLIGHT_KEY) !== 'false'; } catch(e){ return true; }
     })();
-    const HIGHLIGHT_PROBABILITY = 0.30; // probability to highlight a qualifying word (increased intensity)
+    // Deterministic highlighting: keywords that should always be emphasized
+    const HIGHLIGHT_KEYWORDS = [
+        'signal', 'resonance', 'trajectory', 'pattern', 'distortion', 'coherence', 'mirror', 'architecture', 'trajectory', 'excavate', 'attunement', 'entropy', 'alignment', 'system', 'diagnostic', 'truth'
+    ].map(k => k.toLowerCase());
 
     // Create a small toggle in the header to enable/disable highlights
     (function createHighlightToggle(){
@@ -257,10 +260,13 @@
                 // Split by tags so we only manipulate text nodes
                 return html.split(/(<[^>]+>)/g).map(part => {
                     if (part.startsWith('<')) return part;
-                    // Highlight qualifying words (4+ letters) with a probability
-                    return part.replace(/\b([A-Za-z]{4,})\b/g, (m) => {
-                        if (Math.random() < HIGHLIGHT_PROBABILITY) {
-                            const cls = highlightColors[Math.floor(Math.random() * highlightColors.length)];
+                    // Deterministic keyword highlighting: always highlight keywords (case-insensitive)
+                    return part.replace(/\b([A-Za-z]{3,})\b/g, (m) => {
+                        const lower = m.toLowerCase();
+                        if (HIGHLIGHT_ENABLED && HIGHLIGHT_KEYWORDS.includes(lower)) {
+                            // choose a color based on simple hash so it's deterministic
+                            let hash = 0; for (let i=0;i<lower.length;i++) hash = (hash*31 + lower.charCodeAt(i)) & 0xffffffff;
+                            const cls = highlightColors[Math.abs(hash) % highlightColors.length];
                             return `<span class="${cls}">${m}</span>`;
                         }
                         return m;
