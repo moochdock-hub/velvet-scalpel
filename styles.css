@@ -400,20 +400,24 @@ main { padding: 28px; }
 .section-content .highlight-coral,
 .section-content .highlight-azure,
 .section-content .highlight-amber {
-    display: inline-block;
-    line-height: 1.3;
+    display: inline;
+    line-height: inherit;
     vertical-align: baseline;
-    margin: 0 2px;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
 }
 
 /* Keep headings and structure intact: increase specificity only inside inline text */
+/* Allow highlights to change color inside headings as well (no background) */
 h1 .highlight-violet, h1 .highlight-cyan, h1 .highlight-gold, h1 .highlight-rose, h1 .highlight-emerald, h1 .highlight-coral, h1 .highlight-azure, h1 .highlight-amber {
     display: inline;
-    padding: 0 4px;
+    padding: 0;
     background: transparent;
-    color: inherit;
     font-weight: 700;
-    text-shadow: 0 0 6px rgba(0,0,0,0.2);
 }
 
 .begin-button:hover { transform: perspective(600px) translateY(-3px) rotateX(3deg); }
@@ -493,70 +497,58 @@ h1 .highlight-violet, h1 .highlight-cyan, h1 .highlight-gold, h1 .highlight-rose
 .section-content strong { font-weight: 700; color: #ffffff; }
 .section-content em { color: #e9defe; }
 
-/* Vivid highlight classes (restored) */
-/* Vibrant deterministic highlight styles */
-.highlight-violet { color: #121018; background: #f2e9ff; border: 1px solid #dbc8ff; font-weight: 700; padding: 2px 6px; border-radius: 6px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 2px rgba(0,0,0,0.2); }
-.highlight-cyan   { color: #0d1a20; background: #e6fbff; border: 1px solid #c2f2ff; font-weight: 700; padding: 2px 6px; border-radius: 6px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 2px rgba(0,0,0,0.2); }
-.highlight-gold   { color: #2b1a00; background: #fff6d6; border: 1px solid #ffe08a; font-weight: 700; padding: 2px 6px; border-radius: 6px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 2px rgba(0,0,0,0.2); }
-.highlight-rose   { color: #2b0a18; background: #ffe6f2; border: 1px solid #ffbed6; font-weight: 700; padding: 2px 6px; border-radius: 6px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 2px rgba(0,0,0,0.2); }
-.highlight-emerald{ color: #0b271b; background: #e9fff5; border: 1px solid #c9f7e6; font-weight: 700; padding: 2px 6px; border-radius: 6px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 2px rgba(0,0,0,0.2); }
-.highlight-coral  { color: #3b0b00; background: #ffefe8; border: 1px solid #ffd1bf; font-weight: 700; padding: 2px 6px; border-radius: 6px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 2px rgba(0,0,0,0.2); }
-.highlight-azure  { color: #0a1b29; background: #e8f6ff; border: 1px solid #cbeaff; font-weight: 700; padding: 2px 6px; border-radius: 6px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 2px rgba(0,0,0,0.2); }
-.highlight-amber  { color: #2b1900; background: #fff7dc; border: 1px solid #ffe59a; font-weight: 700; padding: 2px 6px; border-radius: 6px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 2px rgba(0,0,0,0.2); }
+/* Highlight classes: color-only, no background or box */
+.highlight-violet { color: #c7a6ff; font-weight: 700; }
+.highlight-cyan   { color: #7fe9ff; font-weight: 700; }
+.highlight-gold   { color: #ffd887; font-weight: 700; }
+.highlight-rose   { color: #ff9ecf; font-weight: 700; }
+.highlight-emerald{ color: #8af2c4; font-weight: 700; }
+.highlight-coral  { color: #ffab92; font-weight: 700; }
+.highlight-azure  { color: #b1e2ff; font-weight: 700; }
+.highlight-amber  { color: #ffe59a; font-weight: 700; }
 
-/* Intensified highlight treatments */
-.response-section .highlight-violet,
-.response-section .highlight-cyan,
-.response-section .highlight-gold,
-.response-section .highlight-rose,
-.response-section .highlight-emerald,
-.response-section .highlight-coral,
-.response-section .highlight-azure,
-.response-section .highlight-amber {
-    box-shadow: 0 6px 22px rgba(0,0,0,0.35) inset, 0 6px 18px rgba(255,255,255,0.02);
-    transform: translateZ(0);
-}
+/* Remove box styling in response sections; highlights are color-only */
 
 /* Alternate palettes: scope overrides on body class without breaking structure */
 /* NEON (default look) */
-body.palette-neon .highlight-violet { color: #121018; background: #f2e9ff; border-color: #dbc8ff; }
-body.palette-neon .highlight-cyan   { color: #0d1a20; background: #e6fbff; border-color: #c2f2ff; }
-body.palette-neon .highlight-gold   { color: #2b1a00; background: #fff6d6; border-color: #ffe08a; }
-body.palette-neon .highlight-rose   { color: #2b0a18; background: #ffe6f2; border-color: #ffbed6; }
-body.palette-neon .highlight-emerald{ color: #0b271b; background: #e9fff5; border-color: #c9f7e6; }
-body.palette-neon .highlight-coral  { color: #3b0b00; background: #ffefe8; border-color: #ffd1bf; }
-body.palette-neon .highlight-azure  { color: #0a1b29; background: #e8f6ff; border-color: #cbeaff; }
-body.palette-neon .highlight-amber  { color: #2b1900; background: #fff7dc; border-color: #ffe59a; }
+body.palette-neon .highlight-violet { color: #c7a6ff; }
+body.palette-neon .highlight-cyan   { color: #7fe9ff; }
+body.palette-neon .highlight-gold   { color: #ffd887; }
+body.palette-neon .highlight-rose   { color: #ff9ecf; }
+body.palette-neon .highlight-emerald{ color: #8af2c4; }
+body.palette-neon .highlight-coral  { color: #ffab92; }
+body.palette-neon .highlight-azure  { color: #b1e2ff; }
+body.palette-neon .highlight-amber  { color: #ffe59a; }
 
 /* OCEAN: cool blues/teals */
-body.palette-ocean .highlight-violet { color: #0b1a33; background: #e7f1ff; border-color: #c8dbff; }
-body.palette-ocean .highlight-cyan   { color: #0a1f26; background: #e6fbff; border-color: #c2f2ff; }
-body.palette-ocean .highlight-gold   { color: #0a1a24; background: #e6f6ff; border-color: #c5eaff; }
-body.palette-ocean .highlight-rose   { color: #0a1624; background: #e8f3ff; border-color: #c9e0ff; }
-body.palette-ocean .highlight-emerald{ color: #0a201f; background: #e6fcf8; border-color: #c3f3ec; }
-body.palette-ocean .highlight-coral  { color: #0a1a1f; background: #e8faf7; border-color: #c6f0ea; }
-body.palette-ocean .highlight-azure  { color: #0a1b29; background: #e8f6ff; border-color: #cbeaff; }
-body.palette-ocean .highlight-amber  { color: #0a1f22; background: #e8fff9; border-color: #c6f8ec; }
+body.palette-ocean .highlight-violet { color: #9fc1ff; }
+body.palette-ocean .highlight-cyan   { color: #86f5ff; }
+body.palette-ocean .highlight-gold   { color: #86d9ff; }
+body.palette-ocean .highlight-rose   { color: #a8d6ff; }
+body.palette-ocean .highlight-emerald{ color: #7feee3; }
+body.palette-ocean .highlight-coral  { color: #8fe9dc; }
+body.palette-ocean .highlight-azure  { color: #80d8ff; }
+body.palette-ocean .highlight-amber  { color: #76ffda; }
 
 /* SUNSET: warm amber/coral/rose */
-body.palette-sunset .highlight-violet { color: #2b0a18; background: #ffe6f3; border-color: #ffc7e2; }
-body.palette-sunset .highlight-cyan   { color: #2b1400; background: #fff1d6; border-color: #ffe0a6; }
-body.palette-sunset .highlight-gold   { color: #2b1900; background: #fff6d6; border-color: #ffe08a; }
-body.palette-sunset .highlight-rose   { color: #2b0a18; background: #ffe6ec; border-color: #ffc2d0; }
-body.palette-sunset .highlight-emerald{ color: #2b1a00; background: #fff2d6; border-color: #ffdd93; }
-body.palette-sunset .highlight-coral  { color: #3b0d03; background: #ffefe8; border-color: #ffd1bf; }
-body.palette-sunset .highlight-azure  { color: #2b0a18; background: #ffe6f2; border-color: #ffbed6; }
-body.palette-sunset .highlight-amber  { color: #2b1400; background: #fff7dc; border-color: #ffe59a; }
+body.palette-sunset .highlight-violet { color: #ff8fc7; }
+body.palette-sunset .highlight-cyan   { color: #ffc97a; }
+body.palette-sunset .highlight-gold   { color: #ffcc66; }
+body.palette-sunset .highlight-rose   { color: #ffa9a1; }
+body.palette-sunset .highlight-emerald{ color: #ffd37a; }
+body.palette-sunset .highlight-coral  { color: #ffb197; }
+body.palette-sunset .highlight-azure  { color: #ffb3d1; }
+body.palette-sunset .highlight-amber  { color: #ffd77a; }
 
 /* MONO: high-contrast grayscale with subtle accent */
-body.palette-mono .highlight-violet { color: #111; background: #f0f0f0; border-color: #dedede; }
-body.palette-mono .highlight-cyan   { color: #111; background: #ededed; border-color: #dcdcdc; }
-body.palette-mono .highlight-gold   { color: #111; background: #f3f3f3; border-color: #e4e4e4; }
-body.palette-mono .highlight-rose   { color: #111; background: #efefef; border-color: #dedede; }
-body.palette-mono .highlight-emerald{ color: #111; background: #f2f2f2; border-color: #e6e6e6; }
-body.palette-mono .highlight-coral  { color: #111; background: #ececec; border-color: #dcdcdc; }
-body.palette-mono .highlight-azure  { color: #111; background: #ededed; border-color: #dcdcdc; }
-body.palette-mono .highlight-amber  { color: #111; background: #f7f7f7; border-color: #e8e8e8; }
+body.palette-mono .highlight-violet { color: #e0e0e0; }
+body.palette-mono .highlight-cyan   { color: #dcdcdc; }
+body.palette-mono .highlight-gold   { color: #e4e4e4; }
+body.palette-mono .highlight-rose   { color: #dedede; }
+body.palette-mono .highlight-emerald{ color: #e6e6e6; }
+body.palette-mono .highlight-coral  { color: #dcdcdc; }
+body.palette-mono .highlight-azure  { color: #dcdcdc; }
+body.palette-mono .highlight-amber  { color: #e8e8e8; }
 
 /* Slightly increase contrast for mirror/reflection body */
 .mirror-section .section-content,
