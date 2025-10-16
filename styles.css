@@ -668,10 +668,42 @@ body { color: #f0ecff; }
   box-shadow: 0 0 0 3px rgba(164, 216, 255, 0.5), 0 10px 28px rgba(106, 71, 255, 0.28);
 }
 
-/* Prevent overlap on small screens */
+/* Mobile: fill screen and optimize readability */
 @media (max-width: 768px) {
-  .composer { position: static; flex-direction: column; gap: 10px; }
-  .composer #send-button { width: 100%; height: 48px; }
+    body { display: block; min-height: 100dvh; }
+    #app {
+        width: 100vw;
+        max-width: none;
+        min-height: 100dvh;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+    }
+    main {
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        min-height: calc(100dvh - 120px);
+    }
+    /* Make chat area expand to available height */
+    #chat-container {
+        flex: 1;
+        min-height: 0; /* allow flex child to shrink/expand */
+        max-height: none;
+        margin: 6px 0 8px 0;
+    }
+    /* Keep composer accessible and full-width */
+    .composer {
+        position: sticky;
+        bottom: 0;
+        flex-direction: column;
+        gap: 10px;
+        padding-bottom: env(safe-area-inset-bottom, 8px);
+        background: linear-gradient(180deg, rgba(20,14,30,0.6) 0%, rgba(20,14,30,0.85) 100%);
+    }
+    .composer #send-button { width: 100%; height: 48px; }
+    /* Slightly larger, more readable body text */
+    .section-content { font-size: 1.08em; line-height: 1.9; }
 }
 
 /* Ensure chat area leaves room for composer when sticky */
